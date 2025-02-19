@@ -4,28 +4,27 @@ import (
     "fmt"
     "os"
 
-    "golang-system-monitor/internal/utils"
+    "golang-system-monitor/internal/collector"
 )
 
 func main(){
-    // mem, err := stats.ReadMemory("/proc/meminfo")
-    //
-    // if err != nil{
-    //     fmt.Println(err)
-    // }
-    //
-    // fmt.Printf("PercentageUsed: %v\n Total:%v\n Used:%v\n Free:%v\n Active:%v\n Inactive:%v\n Buffers:%v\n Cached:%v\n ", mem.PercentageUsed, mem.Total, mem.Used, mem.Free, mem.Active, mem.Inactive, mem.Buffers, mem.Cached)
-    // cpu, err := stats.ReadCpu("/proc/stat")
-    cpu_temp_dir, err := utils.FindCPUTempFile()
-
-    fmt.Println(cpu_temp_dir)
+    //test disks info
+    disks, err := collector.GetDisksInfo()
 
     if err != nil{
         fmt.Println(err)
         os.Exit(1)
     }
 
-    cpu_temp, err := utils.ReadFile(cpu_temp_dir)
+    for _, disk := range disks{
+        fmt.Println("Device: ", disk.Device)
+        fmt.Println("Type: ", disk.Type)
+        fmt.Println("Size: ", disk.Size)
+        fmt.Println("Used: ", disk.Used)
+        fmt.Println("Free: ", disk.Free)
+        fmt.Println("UsedPercentage: ", disk.UsedPercentage)
+        fmt.Println("MountPt: ", disk.MountPt)
+        fmt.Println("====================================")
+    }
 
-    fmt.Println(string(cpu_temp))
 }

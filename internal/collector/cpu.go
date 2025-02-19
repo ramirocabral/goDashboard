@@ -117,11 +117,6 @@ func getCpuTemp() (uint64, error){
 
     cpuTemp := utils.StrToUint64(tempStr[:2])
 
-    if err != nil{
-        log.Println("Error converting temp to int: ", err)
-        return 0, err
-    }
-
     return cpuTemp, nil
 }
 
