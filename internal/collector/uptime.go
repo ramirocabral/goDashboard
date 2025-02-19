@@ -7,7 +7,6 @@ import (
 	"golang-system-monitor/internal/utils"
 )
 
-// Memory struct
 
 type Uptime struct{
     Uptime uint64 //uptime in seconds

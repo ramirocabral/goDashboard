@@ -1,0 +1,4 @@
+github.com/anatol/smart.go v0.0.0-20241126061019-f03d79b340d2 h1:ha5+W2OHFJOEY4uTne98HGD9vQltSYtdyzNCbyhp7rY=
+github.com/anatol/smart.go v0.0.0-20241126061019-f03d79b340d2/go.mod h1:NoOw2eVExhZPtVxpYJzEvdRc5OSbCQZJT2vSe3dflPg=
+golang.org/x/sys v0.27.0 h1:wBqf8DvsY9Y/2P8gAfPDEYNuS30J4lPHJxXSb/nJZ+s=
+golang.org/x/sys v0.27.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
