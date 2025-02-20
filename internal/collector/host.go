@@ -29,7 +29,7 @@ func ReadHost() (Host, error){
     hostnameData, err := utils.ReadFile(HOSTNAME_PATH)
     if err != nil{
         log.Println("Error reading hostname data: ", err)
-        return output, errors.New("Error reading hostname data")
+        return output, errors.New("error reading hostname data")
 
     }
     output.Hostname = strings.TrimSpace(string(hostnameData))
@@ -39,7 +39,7 @@ func ReadHost() (Host, error){
 
     if err != nil{
         log.Println("Error reading os data: ", err)
-        return output, errors.New("Error reading os data")
+        return output, errors.New("error reading os data")
     }
 
     osDataSplit := strings.Split(string(osData), "\n")
@@ -59,7 +59,7 @@ func ReadHost() (Host, error){
 
     if err != nil{
         log.Println("Error reading kernel data: ", err)
-        return output, errors.New("Error reading kernel data")
+        return output, errors.New("error reading kernel data")
     }
 
     kernelDataSplit := strings.Split(string(kernelData), " ")

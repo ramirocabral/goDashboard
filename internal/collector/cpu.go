@@ -8,16 +8,20 @@ import (
 )
 
 type CPU struct{
-    ModelName string
-    Cores uint64
-    Threads uint64
-    Frequency float64
-    Temp uint64                     //CPU temperature
-    UsagePercentage float64         //Percentage of CPU used
-    IdlePercentage float64          //Percentage of time spent idle
-    UserPercentage float64          //Percentage of time spent running user code
-    SystemPercentage float64        //Percentage of time spent running system code
-    IoWaitPercentage float64        //Percentage of time spent waiting for I/O operations to complete
+    ModelName string            `json:"model_name"`
+    Cores uint64                `json:"cores"`
+    Threads uint64              `json:"threads"`
+    Frequency float64           `json:"frequency"`
+    Temp uint64                 `json:"temp"`
+    UsageStatistics Usage       `json:"usage"`
+}
+
+type Usage struct{
+    UsagePercentage float64     `json:"usage_percentage"`
+    IdlePercentage float64      `json:"idle_percentage"`
+    UserPercentage float64      `json:"user_percentage"`
+    SystemPercentage float64    `json:"system_percentage"`  
+    IoWaitPercentage float64    `json:"io_wait_percentage"`
 }
 
 const CPU_PATH = "/proc/stat"
@@ -34,11 +38,15 @@ func ReadCPU() (CPU, error){
         return CPU{}, err
     }
 
-    output.UsagePercentage = cpuStats.UsagePercentage
-    output.IdlePercentage = cpuStats.IdlePercentage
-    output.UserPercentage = cpuStats.UserPercentage
-    output.SystemPercentage = cpuStats.SystemPercentage
-    output.IoWaitPercentage = cpuStats.IoWaitPercentage
+    usage := Usage{}
+
+    usage.UsagePercentage = cpuStats.UsageStatistics.IdlePercentage
+    usage.IdlePercentage = cpuStats.UsageStatistics.IdlePercentage
+    usage.UserPercentage = cpuStats.UsageStatistics.UserPercentage
+    usage.SystemPercentage = cpuStats.UsageStatistics.SystemPercentage
+    usage.IoWaitPercentage = cpuStats.UsageStatistics.IoWaitPercentage
+
+    output.UsageStatistics = usage
 
     //get cpu temperature
     tmp,err := getCpuTemp()
@@ -90,11 +98,15 @@ func getCPUStats()(CPU, error){
 
     total := usr64 + nice64 + system64 + idle64 + iowait64 + irq64 + softirq64
 
-    output.UsagePercentage = (float64(total - idle64) / float64(total)) * 100
-    output.IdlePercentage = float64(idle64 / total) * 100
-    output.UserPercentage = float64(usr64 / total) * 100
-    output.SystemPercentage = float64(system64 / total) * 100
-    output.IoWaitPercentage = float64(iowait64 / total) * 100
+    usage := Usage{}
+
+    usage.UsagePercentage = (float64(total - idle64) / float64(total)) * 100
+    usage.IdlePercentage = float64(idle64 / total) * 100
+    usage.UserPercentage = float64(usr64 / total) * 100
+    usage.SystemPercentage = float64(system64 / total) * 100
+    usage.IoWaitPercentage = float64(iowait64 / total) * 100
+
+    output.UsageStatistics = usage
 
     return output, nil
 }

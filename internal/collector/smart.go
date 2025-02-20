@@ -8,8 +8,6 @@ import(
     "github.com/anatol/smart.go"
 )
 
-//get disks SMART updates
-
 type Smart struct{
     Device  string              `json:"device"`
     Data    map[string]string   `json:"data"`

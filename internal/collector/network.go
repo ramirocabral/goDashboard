@@ -20,7 +20,7 @@ type NetworkUsage struct {
 }
 
 
-func GetNetworks() ([]Network, error){
+func ReadNetworks() ([]Network, error){
     output := []Network{}
 
     command := "ip -o addr show scope global | awk '{split($4, a, \"/\"); print $2\" : \"a[1]}'"

@@ -8,14 +8,14 @@ import(
 )
 
 type Memory struct{
-    PercentageUsed float64
-    Total uint64
-    Used uint64
-    Free uint64
-    Active uint64
-    Inactive uint64
-    Buffers uint64
-    Cached uint64
+    PercentageUsed float64  `json:"percentage_used"`
+    Total uint64            `json:"total"`
+    Used uint64             `json:"used"`
+    Free uint64             `json:"free"`
+    Active uint64           `json:"active"`
+    Inactive uint64         `json:"inactive"`
+    Buffers uint64          `json:"buffers"`
+    Cached uint64           `json:"cached"`
 }
 
 const MEMORY_PATH = "/proc/meminfo"

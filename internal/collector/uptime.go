@@ -9,7 +9,7 @@ import (
 
 
 type Uptime struct{
-    Uptime uint64 //uptime in seconds
+    Uptime uint64   `json:"uptime"`
 }
 
 const UPTIME_PATH = "/proc/uptime"

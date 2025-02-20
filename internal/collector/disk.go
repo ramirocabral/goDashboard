@@ -17,7 +17,7 @@ type Disk struct {
     UsedPercentage  uint64
 }    
 
-func GetDisksInfo() ([]Disk, error) {
+func ReadDisks() ([]Disk, error) {
     diskData, err := utils.ExecuteCommand("df","-T","-BG","--exclude-type=tmpfs","--exclude-type=devtmpfs","--exclude-type=cifs","--exclude-type=efivarfs")
     diskDataSplit := strings.Split(string(diskData), "\n")[1:]
 

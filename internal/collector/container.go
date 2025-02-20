@@ -16,7 +16,7 @@ type Container struct{
 }
 
 
-func GetContainers() ([]Container, error){
+func ReadContainers() ([]Container, error){
     output := []Container{}
 
     cli, err := client.NewClientWithOpts(client.FromEnv)
