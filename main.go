@@ -8,20 +8,34 @@ import (
 )
 
 func main(){
-    //test disks info
-    smart, err := collector.ReadSmart("/dev/nvme0n1")
+    containers, err := collector.GetContainers()
 
     if err != nil{
-        fmt.Println("Error reading smart data: ", err)
+        fmt.Println("Error getting containers: ", err)
         os.Exit(1)
     }
 
-    fmt.Println("Device:", smart.Device)
-
-
-    //print the map[string]string
-    for key, value := range smart.Data{
-        fmt.Println(key, ":", value)
+    for _, container := range containers{
+        fmt.Println(container.Name)
+        fmt.Println(container.Uptime)
+        fmt.Println(container.Image)
+        fmt.Println(container.Status)
     }
+
+
+    // networks, err := collector.GetNetworks()
+    //
+    // if err != nil{
+    //     fmt.Println("Error getting networks: ", err)
+    //     os.Exit(1)
+    // }
+    //
+    // for _, network := range networks{
+    //     fmt.Println(network.Interface)
+    //     fmt.Println(network.Ip)
+    //     fmt.Println(network.Usage.RxBytes)
+    //     fmt.Println(network.Usage.TxBytes)
+    //     fmt.Println(network.Usage.State)
+    // }
 
 }

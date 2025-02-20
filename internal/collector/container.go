@@ -3,43 +3,16 @@ package collector
 import (
 	"context"
 	"log"
-	"strings"
 
-	"golang-system-monitor/internal/utils"
-
-	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 )
 
-// type Container struct {
-// 	ID         string `json:"Id"`
-// 	Names      []string
-// 	Image      string
-// 	ImageID    string
-// 	Command    string
-// 	Created    int64
-// 	Ports      []Port
-// 	SizeRw     int64 `json:",omitempty"`
-// 	SizeRootFs int64 `json:",omitempty"`
-// 	Labels     map[string]string
-// 	State      string
-// 	Status     string
-// 	HostConfig struct {
-// 		NetworkMode string            `json:",omitempty"`
-// 		Annotations map[string]string `json:",omitempty"`
-// 	}
-// 	NetworkSettings *SummaryNetworkSettings
-// 	Mounts          []MountPoint
-// }
-
-//get containers info
-
 type Container struct{
     Name    string  `json:"name"`
+    Status  string  `json:"status"`
     Uptime  string  `json:"uptime"`
     Image   string  `json:"image"`  
-    Status  string  `json:"status"`
 }
 
 
@@ -62,8 +35,8 @@ func GetContainers() ([]Container, error){
     for _, container := range containers{
         output = append(output, Container{
             Name: container.Names[0],
-            Status: container.State,
-            Uptime: container.Status,
+            Status: container.Status,
+            Uptime: container.State,
             Image: container.Image,
         })
     }
