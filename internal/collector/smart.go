@@ -82,7 +82,7 @@ func readSataSmart(dataSplit []string) map[string]string{
             continue
         }
 
-        output[fields[0]] = strings.Join(fields[1:], " ")
+        output[fields[2]] = strings.Join(fields[2:], " ")
     }
 
     return output

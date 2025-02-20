@@ -14,3 +14,12 @@ func ExecuteCommand(command string, args ...string) (string, error){
 
     return string(stdout), nil
 }
+
+func ExecuteCommandWithPipe(command string, params ...string) (string, error) {
+	cmd := exec.Command("bash", "-c", command)
+	stdout, err := cmd.Output()
+	if err != nil {
+		return string(stdout), err
+	}
+	return string(stdout), nil
+}
