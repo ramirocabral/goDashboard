@@ -3,6 +3,7 @@ package collector
 import (
     "log"
     "strings"
+    "fmt"
 
     "golang-system-monitor/internal/utils"
 )
@@ -51,7 +52,7 @@ func ReadCPU() (CPU, error){
     //get cpu temperature
     tmp,err := getCpuTemp()
 
-    if err == nil{
+    if err != nil{
         log.Println("Error getting CPU temp: ", err)
         return CPU{}, err
     }
@@ -98,10 +99,15 @@ func getCPUStats()(CPU, error){
 
     total := usr64 + nice64 + system64 + idle64 + iowait64 + irq64 + softirq64
 
+    fmt.Println(total)
+
     usage := Usage{}
 
     usage.UsagePercentage = (float64(total - idle64) / float64(total)) * 100
-    usage.IdlePercentage = float64(idle64 / total) * 100
+
+    fmt.Println(usage.UsagePercentage)
+    usage.IdlePercentage = (float64(idle64) / float64(total)) * 100
+    fmt.Println(usage.IdlePercentage)
     usage.UserPercentage = float64(usr64 / total) * 100
     usage.SystemPercentage = float64(system64 / total) * 100
     usage.IoWaitPercentage = float64(iowait64 / total) * 100
@@ -113,7 +119,9 @@ func getCPUStats()(CPU, error){
 
 func getCpuTemp() (uint64, error){
     tempFile, err := utils.FindCPUTempFile()
+    
 
+    //encuentra el archivos
     if err != nil{
         log.Println("Error finding CPU temp file: ", err)
         return 0, err
