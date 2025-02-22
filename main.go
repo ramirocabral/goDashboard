@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"golang-system-monitor/internal/collector"
+	"golang-system-monitor/internal/collector/cpu"
 
 	"github.com/gorilla/websocket"
 )
@@ -151,12 +151,12 @@ func (c *CPUCollector) Start(ctx context.Context) error{
                 return ctx.Err()
             case <-ticker.C:
                 // get cpu data
-                cpuData, err := collector.ReadCPU()
+                cpuData, err := cpu.ReadCPU()
                 if err != nil{
                     log.Fatal("Error reading cpu data: ", err)
                     continue
                 }
-
+                //create messae struct and send it to the event bus
                 c.eventBus.topics["cpu"].messages <- Message{
                     Type: "cpu",
                     Timestamp: time.Now(),
