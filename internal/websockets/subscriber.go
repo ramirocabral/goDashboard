@@ -11,15 +11,16 @@ import (
 type WebSocketSubscriber struct{
     Id          string              //usually the ip addr of the client
     Conn        *websocket.Conn     //websocket connection
-    EventBus    *core.EventBus           //EventBus assigned
+    EventBus    *core.EventBus      
     Topics      map[string]struct{} //topics subscribed to
-    Mu          sync.RWMutex        //websocket mutex for safety
+    Mu          sync.RWMutex        //mutex for safety, since multiple goroutines can access the same ws
 }
 
 func (ws *WebSocketSubscriber) ID() string{
     return ws.Id
 }
 
+// handle function, executes when a message is received
 func (ws *WebSocketSubscriber) Handle(msg core.Message){
     ws.Mu.Lock()
     defer ws.Mu.Unlock()
@@ -73,12 +74,8 @@ func (ws *WebSocketSubscriber) Unsubscribe(topic string) error{
     return nil
 }
 
+// close the connection and unsubscribe from all topics
 func (ws *WebSocketSubscriber) HandleDisconnect(){
-    ws.EventBus.RemoveSubscriber(ws.Id)  
-    ws.Close()
-}
-
-func (ws *WebSocketSubscriber) Close(){
     ws.Mu.Lock()
     defer ws.Mu.Unlock()
 

@@ -25,20 +25,21 @@ type Message struct{
     Data            interface{}
 }
 
-
+// a topic representes a type of message that can be published to the event bus, and eventually dispatched to all of its subscribers
 type Topic struct{
     Name        string
-    Subscribers map[string]Subscriber
-    Mu          sync.RWMutex
+    Subscribers map[string]Subscriber   //list of subscribers
+    Mu          sync.RWMutex               
     Messages    chan Message
 }
 
-
+// the eventbus is the main component of the system, it holds all the topics and dispatches the messages to the subscribers
 type EventBus struct{
     Topics  map[string]*Topic
     Mu      sync.RWMutex
 }
 
+// adds a subscriber to the topic
 func (t *Topic) AddSubscriber(sub Subscriber){
     t.Mu.Lock()
     defer t.Mu.Unlock()
@@ -46,13 +47,14 @@ func (t *Topic) AddSubscriber(sub Subscriber){
     t.Subscribers[sub.ID()] = sub
 }
 
+//constructor
 func NewEventBus() *EventBus{
     return &EventBus{
         Topics: make(map[string]*Topic),
     }
 }
 
-//dispatches every message received to all of its Subscribers
+// dispatches every message received to all of its Subscribers
 func (t *Topic) dispatch(){
     for msg := range t.Messages{
         t.Mu.RLock()
@@ -63,7 +65,7 @@ func (t *Topic) dispatch(){
     }
 }
 
-//add a new topic to the event bus, so the Subscribers can subscribe to it
+// add a new topic to the event bus, so the Subscribers can subscribe to it
 func (eb *EventBus) AddTopic(name string){
     eb.Mu.Lock()
     defer eb.Mu.Unlock()
@@ -77,18 +79,7 @@ func (eb *EventBus) AddTopic(name string){
     }
 }
 
-//remove a subscriber from every topic on the event bus
-func (eb *EventBus) RemoveSubscriber(id string){
-    eb.Mu.Lock()
-    defer eb.Mu.Unlock()
-
-    for _, topic := range eb.Topics{
-        topic.Mu.Lock()
-        delete(topic.Subscribers, id)
-        topic.Mu.Unlock()
-    }
-}
-
+// creates a new topic and starts the dispatching process
 func (eb *EventBus) CreateTopic(name string) *Topic{
     eb.Mu.Lock()
     defer eb.Mu.Unlock()
