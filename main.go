@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+
+	// "fmt"
 	"log"
 	"net/http"
 	"sync"
@@ -12,7 +14,6 @@ import (
 	"golang-system-monitor/internal/collector"
 
 	"github.com/gorilla/websocket"
-        "github.com/google/uuid"
 )
 
 type Message struct{
@@ -24,14 +25,14 @@ type Message struct{
 type Publisher interface{
     Publish(Message)
     Start(context.Context)  error
-    Stop()      error
+    Stop()                  error
 }
 
 type Subscriber interface{
     ID()                    string
     Handle(Message)
-    Subscribe(...string)    error
-    Unsubscribe(...string)  error
+    Subscribe(string)       error
+    Unsubscribe(string)     error
 }
 
 type MetricCollector struct{
@@ -79,10 +80,10 @@ func (t *Topic) AddSubscriber(sub Subscriber){
 
 
 type WebSocketSubscriber struct{
-    id          string
-    conn        *websocket.Conn
-    eventBus    *EventBus
-    topics      map[string]struct{}
+    id          string              //usually the ip addr of the client
+    conn        *websocket.Conn     //websocket connection
+    eventBus    *EventBus           //eventBus assigned
+    topics      map[string]struct{} //topics subscribed to
     mu          sync.RWMutex        //websocket mutex for safety
 }
 
@@ -97,6 +98,7 @@ func NewEventBus() *EventBus{
     }
 }
 
+//add a new topic to the event bus, so the subscribers can subscribe to it
 func (eb *EventBus) AddTopic(name string){
     eb.mu.Lock()
     defer eb.mu.Unlock()
@@ -110,6 +112,20 @@ func (eb *EventBus) AddTopic(name string){
     }
 }
 
+//remove a subscriber from every topic on the event bus
+func (eb *EventBus) RemoveSubscriber(id string){
+    eb.mu.Lock()
+    defer eb.mu.Unlock()
+
+    for _, topic := range eb.topics{
+        topic.mu.Lock()
+        delete(topic.subscribers, id)
+        topic.mu.Unlock()
+    }
+}
+
+
+//dispatches the every message received to all of its subscribers
 func (t *Topic) dispatch(){
     for msg := range t.messages{
         t.mu.RLock()
@@ -173,54 +189,70 @@ func (ws *WebSocketSubscriber) Handle(msg Message){
         return
     }
 
-    //enviar al websocket
     err := ws.conn.WriteJSON(msg)
     if err != nil{
-        log.Fatal("Error writing to websocket: ", err)
+        log.Println("Error writing to websocket: ", err)
+        ws.HandleDisconnect()
     }
 }
 
-func (ws *WebSocketSubscriber) Subscribe(topics ...string) error{
+//subscribe to a topic
+func (ws *WebSocketSubscriber) Subscribe(topic string) error{
     ws.mu.Lock()
     defer ws.mu.Unlock()
 
-    for _, topic := range topics{
-        if _, ok := ws.topics[topic]; ok{
-            continue
-        }
-
-        ws.topics[topic] = struct{}{}
-
-        ws.eventBus.topics[topic].mu.Lock()
-        ws.eventBus.topics[topic].subscribers[ws.conn.RemoteAddr().String()] = ws
-        ws.eventBus.topics[topic].mu.Unlock()
+    if _, ok := ws.topics[topic]; ok{
+        return nil
     }
+
+    ws.topics[topic] = struct{}{}
+
+    ws.eventBus.topics[topic].mu.Lock()
+    ws.eventBus.topics[topic].subscribers[ws.ID()] = ws
+    ws.eventBus.topics[topic].mu.Unlock()
 
     return nil
 }
 
-func (ws *WebSocketSubscriber) Unsubscribe(topics ...string) error{
+//unsubscribe from a topic
+func (ws *WebSocketSubscriber) Unsubscribe(topic string) error{
     ws.mu.Lock()
     defer ws.mu.Unlock()
 
-    for _, topic := range topics{
-        if _, ok := ws.topics[topic]; !ok{
-            continue
-        }
-
-        delete(ws.topics, topic)
-
-        ws.eventBus.topics[topic].mu.Lock()
-        delete(ws.eventBus.topics[topic].subscribers, ws.conn.RemoteAddr().String())
-        ws.eventBus.topics[topic].mu.Unlock()
+    if _, ok := ws.topics[topic]; !ok{
+        return nil
     }
 
+    //remove the topics from the ws list
+    delete(ws.topics, topic)
+
+    //remove the ws from the topic's subscribers
+    ws.eventBus.topics[topic].mu.Lock()
+    delete(ws.eventBus.topics[topic].subscribers, ws.ID())
+    ws.eventBus.topics[topic].mu.Unlock()
+
     return nil
+}
+
+func (ws *WebSocketSubscriber) HandleDisconnect(){
+    ws.eventBus.RemoveSubscriber(ws.id)  
+    ws.Close()
+}
+
+func (ws *WebSocketSubscriber) Close(){
+    ws.mu.Lock()
+    defer ws.mu.Unlock()
+
+    for topic := range ws.topics{
+        ws.Unsubscribe(topic)
+    }
+
+    ws.conn.Close()
 }
 
 func NewWebSocketSubscriber(conn *websocket.Conn, eb *EventBus) *WebSocketSubscriber{
     return &WebSocketSubscriber{
-        id: uuid.New().String(),
+        id: conn.RemoteAddr().String(),
         conn: conn,
         eventBus: eb,
         topics: make(map[string]struct{}),
