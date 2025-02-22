@@ -14,7 +14,7 @@ import (
 
 	"golang-system-monitor/internal/collector/cpu"
 	"golang-system-monitor/internal/core"
-    "golang-system-monitor/internal/websockets"
+	"golang-system-monitor/internal/websockets"
 )
 
 type DatabaseSubscriber struct{
@@ -26,6 +26,23 @@ var upgrader = websocket.Upgrader{
     ReadBufferSize: 1024,
     WriteBufferSize: 1024,
 }
+
+type config struct{
+    addr	string
+    apiURL	string
+    db      	dbConfig
+    env		string
+}
+
+//influxdb config
+type dbConfig struct{
+    addr    string
+    token   string
+    org     string
+    bucket  string
+}
+
+
 
 func main(){
 
