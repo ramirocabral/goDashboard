@@ -1,18 +1,27 @@
 package websockets
 
 import (
-    "log"
-    "sync"
+	"log"
+	"sync"
 
-    "github.com/gorilla/websocket"
-    "golang-system-monitor/internal/core"
+	"golang-system-monitor/internal/core"
+
+	"github.com/gorilla/websocket"
 )
 
 type WebSocketSubscriber struct{
     Id          string              //usually the ip addr of the client
     Conn        *websocket.Conn     //websocket connection
     Topics      map[string]*core.Topic
-    Mu          sync.RWMutex        //mutex for safety, since multiple goroutines can access the same ws
+    Mu          *sync.RWMutex        //mutex for safety, since multiple goroutines can access the same ws
+}
+
+func NewWebSocketSubscriber(conn *websocket.Conn) *WebSocketSubscriber{
+    return &WebSocketSubscriber{
+        Id: conn.RemoteAddr().String(),
+        Conn: conn,
+        Topics: make(map[string]*core.Topic),
+    }
 }
 
 func (ws *WebSocketSubscriber) ID() string{
@@ -82,12 +91,4 @@ func (ws *WebSocketSubscriber) HandleDisconnect(){
     }
 
     ws.Conn.Close()
-}
-
-func NewWebSocketSubscriber(conn *websocket.Conn) *WebSocketSubscriber{
-    return &WebSocketSubscriber{
-        Id: conn.RemoteAddr().String(),
-        Conn: conn,
-        Topics: make(map[string]*core.Topic),
-    }
 }

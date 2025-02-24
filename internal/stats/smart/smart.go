@@ -13,6 +13,13 @@ type Smart struct{
     Data    map[string]string   `json:"data"`
 }
 
+func (s *Smart) ToMap() map[string]interface{}{
+    return map[string]interface{}{
+        "device": s.Device,
+        "data": s.Data,
+    }
+}
+
 func ReadSmart(device string) (Smart, error){
 
     dev, err := smart.Open(device)

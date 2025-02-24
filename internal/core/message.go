@@ -19,10 +19,14 @@ type Subscriber interface{
     Unsubscribe(*Topic)     error
 }
 
+type Storable interface{
+    ToMap() map[string]interface{}
+}
+
 type Message struct{
     Type            string
     Timestamp       time.Time
-    Data            interface{}
+    Data            Storable
 }
 
 // a topic representes a type of message that can be published to the event bus, and eventually dispatched to all of its subscribers
@@ -43,7 +47,6 @@ type EventBus struct{
 func (t *Topic) AddSubscriber(sub Subscriber){
     t.Mu.Lock()
     defer t.Mu.Unlock()
-
     t.Subscribers[sub.ID()] = sub
 }
 

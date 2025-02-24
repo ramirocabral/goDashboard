@@ -8,7 +8,7 @@ import(
 )
 
 type Memory struct{
-    PercentageUsed float64  `json:"percentage_used"`
+    UsedPercentage float64  `json:"used_percentage"`
     Total uint64            `json:"total"`
     Used uint64             `json:"used"`
     Free uint64             `json:"free"`
@@ -16,6 +16,19 @@ type Memory struct{
     Inactive uint64         `json:"inactive"`
     Buffers uint64          `json:"buffers"`
     Cached uint64           `json:"cached"`
+}
+
+func (m *Memory) ToMap() map[string]interface{}{
+    return map[string]interface{}{
+        "used_percentage": m.UsedPercentage,
+        "total": m.Total,
+        "used": m.Used,
+        "free": m.Free,
+        "active": m.Active,
+        "inactive": m.Inactive,
+        "buffers": m.Buffers,
+        "cached": m.Cached,
+    }
 }
 
 const MEMORY_PATH = "/proc/meminfo"

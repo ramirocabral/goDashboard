@@ -1,4 +1,4 @@
-package container
+package collector
 
 import (
 	"context"
@@ -13,6 +13,15 @@ type Container struct{
     Status  string  `json:"status"`
     Uptime  string  `json:"uptime"`
     Image   string  `json:"image"`  
+}
+
+func (c *Container) ToMap() map[string]interface{}{
+    return map[string]interface{}{
+        "name": c.Name,
+        "status": c.Status,
+        "uptime": c.Uptime,
+        "image": c.Image,
+    }
 }
 
 

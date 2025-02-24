@@ -12,6 +12,12 @@ type Uptime struct{
     Uptime uint64   `json:"uptime"`
 }
 
+func (u *Uptime) ToMap() map[string]interface{}{
+	return map[string]interface{}{
+		"uptime": u.Uptime,
+	}
+}
+
 const UPTIME_PATH = "/proc/uptime"
 
 // ReadUptime function

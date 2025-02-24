@@ -17,6 +17,18 @@ type Disk struct {
     UsedPercentage  uint64
 }    
 
+func (d *Disk) ToMap() map[string]interface{} {
+    return map[string]interface{}{
+        "device": d.Device,
+        "type": d.Type,
+        "size": d.Size,
+        "used": d.Used,
+        "free": d.Free,
+        "used_percentage": d.UsedPercentage,
+        "mount_point": d.MountPt,
+    }
+}
+
 func ReadDisks() ([]Disk, error) {
     diskData, err := utils.ExecuteCommand("df","-T","-BG","--exclude-type=tmpfs","--exclude-type=devtmpfs","--exclude-type=cifs","--exclude-type=efivarfs")
     diskDataSplit := strings.Split(string(diskData), "\n")[1:]

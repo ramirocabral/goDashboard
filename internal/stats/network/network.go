@@ -1,4 +1,4 @@
-package memory
+package network
 
 import (
 	"log"
@@ -21,6 +21,15 @@ type NetworkUsage struct {
 type ByteStore struct {
     RxBytes uint64      //received bytes on last check
     TxBytes uint64      //transmitted bytes on last check
+}
+
+func (n *Network) ToMap() map[string]interface{}{
+    return map[string]interface{}{
+        "interface": n.Interface,
+        "ip": n.Ip,
+        "usage": n.Usage,
+    }
+
 }
 
 var lastNetworkData = map[string]ByteStore{}

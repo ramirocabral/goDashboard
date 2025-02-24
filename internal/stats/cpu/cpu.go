@@ -23,6 +23,16 @@ type Usage struct{
     IdlePercentage float64      `json:"idle_percentage"`
 }
 
+func (c *CPU) ToMap() map[string]interface{}{
+    return map[string]interface{}{
+        "model_name": c.ModelName,
+        "cores": c.Cores,
+        "threads": c.Threads,
+        "temp": c.Temp,
+        "usage": c.UsageStatistics,
+    }
+}
+
 var firstRun = true
 
 const CPU_PATH = "/proc/stat"
