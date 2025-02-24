@@ -43,7 +43,6 @@ type dbConfig struct{
 }
 
 
-
 func main(){
 
     ctx := context.Background()
@@ -64,13 +63,11 @@ func main(){
             return
         }
 
-        ws := websockets.NewWebSocketSubscriber(conn, eb)
+        ws := websockets.NewWebSocketSubscriber(conn)
 
-        ws.Topics["cpu"] = struct{}{}
+        go ws.Subscribe(cpuTopic)
 
-        go ws.Subscribe("cpu")
-
-        defer ws.Unsubscribe("cpu")
+        defer ws.Unsubscribe(cpuTopic)
     })
 
     log.Fatal(http.ListenAndServe(":8080", nil))

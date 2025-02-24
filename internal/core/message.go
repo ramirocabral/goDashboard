@@ -15,8 +15,8 @@ type Publisher interface{
 type Subscriber interface{
     ID()                    string
     Handle(Message)
-    Subscribe(string)       error
-    Unsubscribe(string)     error
+    Subscribe(*Topic)       error
+    Unsubscribe(*Topic)     error
 }
 
 type Message struct{
@@ -28,7 +28,7 @@ type Message struct{
 // a topic representes a type of message that can be published to the event bus, and eventually dispatched to all of its subscribers
 type Topic struct{
     Name        string
-    Subscribers map[string]Subscriber   //list of subscribers
+    Subscribers map[string]Subscriber
     Mu          sync.RWMutex               
     Messages    chan Message
 }
@@ -45,6 +45,14 @@ func (t *Topic) AddSubscriber(sub Subscriber){
     defer t.Mu.Unlock()
 
     t.Subscribers[sub.ID()] = sub
+}
+
+// removes a subscriber from the topic
+func (t *Topic) RemoveSubscriber(sub Subscriber){
+    t.Mu.Lock()
+    defer t.Mu.Unlock()
+
+    delete(t.Subscribers, sub.ID())
 }
 
 //constructor

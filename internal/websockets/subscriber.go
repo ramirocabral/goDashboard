@@ -11,8 +11,7 @@ import (
 type WebSocketSubscriber struct{
     Id          string              //usually the ip addr of the client
     Conn        *websocket.Conn     //websocket connection
-    EventBus    *core.EventBus      
-    Topics      map[string]struct{} //topics subscribed to
+    Topics      map[string]*core.Topic
     Mu          sync.RWMutex        //mutex for safety, since multiple goroutines can access the same ws
 }
 
@@ -37,39 +36,38 @@ func (ws *WebSocketSubscriber) Handle(msg core.Message){
 }
 
 //subscribe to a topic
-func (ws *WebSocketSubscriber) Subscribe(topic string) error{
+func (ws *WebSocketSubscriber) Subscribe(topic *core.Topic) error{
     ws.Mu.Lock()
     defer ws.Mu.Unlock()
 
-    if _, ok := ws.Topics[topic]; ok{
+    //if already subscribed, return
+    if _, ok := ws.Topics[topic.Name]; ok{
         return nil
     }
 
-    ws.Topics[topic] = struct{}{}
+    ws.Topics[topic.Name] = topic
 
-    ws.EventBus.Topics[topic].Mu.Lock()
-    ws.EventBus.Topics[topic].Subscribers[ws.ID()] = ws
-    ws.EventBus.Topics[topic].Mu.Unlock()
+    //add the ws to the topic's subscribers
+    topic.AddSubscriber(ws)
 
     return nil
 }
 
 //unsubscribe from a topic
-func (ws *WebSocketSubscriber) Unsubscribe(topic string) error{
+func (ws *WebSocketSubscriber) Unsubscribe(topic *core.Topic) error{
     ws.Mu.Lock()
     defer ws.Mu.Unlock()
 
-    if _, ok := ws.Topics[topic]; !ok{
+    //if not subscribed, return
+    if _, ok := ws.Topics[topic.Name]; !ok{
         return nil
     }
 
     //remove the topics from the ws list
-    delete(ws.Topics, topic)
+    delete(ws.Topics, topic.Name)
 
     //remove the ws from the topic's subscribers
-    ws.EventBus.Topics[topic].Mu.Lock()
-    delete(ws.EventBus.Topics[topic].Subscribers, ws.ID())
-    ws.EventBus.Topics[topic].Mu.Unlock()
+    topic.RemoveSubscriber(ws)
 
     return nil
 }
@@ -79,18 +77,17 @@ func (ws *WebSocketSubscriber) HandleDisconnect(){
     ws.Mu.Lock()
     defer ws.Mu.Unlock()
 
-    for topic := range ws.Topics{
+    for _, topic := range ws.Topics{
         ws.Unsubscribe(topic)
     }
 
     ws.Conn.Close()
 }
 
-func NewWebSocketSubscriber(conn *websocket.Conn, eb *core.EventBus) *WebSocketSubscriber{
+func NewWebSocketSubscriber(conn *websocket.Conn) *WebSocketSubscriber{
     return &WebSocketSubscriber{
         Id: conn.RemoteAddr().String(),
         Conn: conn,
-        EventBus: eb,
-        Topics: make(map[string]struct{}),
+        Topics: make(map[string]*core.Topic),
     }
 }
