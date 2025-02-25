@@ -1,7 +1,12 @@
 package influxdb
 
 import(
+    "time"
+    "context"
+    "fmt"
 
+    "golang-system-monitor/internal/core"
+    "golang-system-monitor/internal/storage"
     "github.com/influxdata/influxdb-client-go/v2"
     "github.com/influxdata/influxdb-client-go/v2/api"
 )
@@ -13,7 +18,7 @@ type InfluxStore struct{
 }
 
 
-func New(addr, token string) (Storage, error) {
+func New(addr, token string) (storage.Storage, error) {
     client := influxdb2.NewClient(addr, token)
     writeAPI := client.WriteAPI("my-org", "my-bucket")
     queryAPI := client.QueryAPI("my-org")
@@ -28,26 +33,25 @@ func (s *InfluxStore) ID() string{
 }
 
 //TODO: Change and receive a point
-func (s *InfluxStore) WriteStats(m *core.Message){
-    point := influxdb2.NewPoint(m.Type,
-            map[string]string{
-            "host": os.Getenv("HOST"),
-            },
-            m.Data.ToMap(),
-            time.Now(),
-    )
+func (s *InfluxStore) WriteStats(p *core.Point){
+
+    point := influxdb2.NewPoint(
+            p.Measurement,
+            p.Tags,
+            p.Fields,
+            p.Timestamp)
 
     s.writeAPI.WritePoint(point)
 }
 
-func (s *InfluxStore) ReadCpuStats(startTime time.Time, endTime time.Time) ([]CPUStats, error){
+func (s *InfluxStore) ReadCpuStats(startTime, endTime time.Time) (storage.CPUResponse, error){
 
         query := fmt.Sprintf(`
         from(bucket: "my-bucket")
             |> range(start: %s, stop: %s)
             |> filter(fn: (r) => r._measurement == "cpu")
             |> pivot(rowKey:["_time"], columnKey: ["_field"], valueColumn: "_value")
-            |> keep(columns: ["_time", "model_name", "cores", "threads", "temp", "usage_percentage", "idle_percentage"]) `, startTime.UTC().Format(time.RFC3339), endTime.UTC().Format(time.RFC3339))
+            |> keep(columns: ["_time", "model_name", "temp", "usage_percentage", "idle_percentage"]) `, startTime.UTC().Format(time.RFC3339), endTime.UTC().Format(time.RFC3339))
 
     result, err := s.queryAPI.Query(context.Background(), query)
     if err != nil {

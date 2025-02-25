@@ -1,16 +1,19 @@
 package storage
 
 import (
-    "golang-system-monitor/internal/core"
     "time"
+    "golang-system-monitor/internal/core"
 )
 
-type Point struct{
-    Timestamp       time.Time
-    Measurement     string
-    Tags            map[string]string
-    Fields          map[string]interface{}
+type Storage interface{
+    ID() string
+    WriteStats(point *core.Point) error
+    ReadCpuStats(startTime, endTime time.Time) (CPUResponse, error)
+    ReadIOStats(startTime, endTime time.Time) (IOResponse, error)
+    ReadMemoryStats(startTime, endTime time.Time) (MemoryResponse, error)
+    ReadNetworkStats(startTime, endTime time.Time) (NetworkResponse, error)
 }
+
 
 type CPUResponse struct{
     ModelName   string          `json:"model_name"`
@@ -69,13 +72,4 @@ type NetworkPoint struct{
     Timestamp       time.Time       `json:"timestamp"`
     RxBytesPS       uint64          `json:"rx_bytes_ps"`
     TxBytesPS       uint64          `json:"tx_bytes_ps"`
-}
-
-type Storage interface{
-    ID() string
-    WriteStats(point *Point) error
-    ReadCpuStats(startTime, endTime time.Time) (CPUResponse, error)
-    ReadIOStats(startTime, endTime time.Time) (IOResponse, error)
-    ReadMemoryStats(startTime, endTime time.Time) (MemoryResponse, error)
-    ReadNetworkStats(startTime, endTime time.Time) (NetworkResponse, error)
 }

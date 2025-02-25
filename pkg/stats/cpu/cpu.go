@@ -6,7 +6,7 @@ import (
     "time"
 
     "golang-system-monitor/internal/utils"
-    "golang-system-monitor/internal/storage"
+    "golang-system-monitor/internal/core"
 
     "github.com/shirou/gopsutil/v3/cpu"
 )
@@ -24,8 +24,8 @@ type Usage struct{
     IdlePercentage float64      `json:"idle_percentage"`
 }
 
-func (c CPU) ToPoint() *storage.Point{
-    return &storage.Point{
+func (c CPU) ToPoint() *core.Point{
+    return &core.Point{
         Timestamp: time.Now(),
         Measurement: "cpu",
         Tags: map[string]string{

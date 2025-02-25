@@ -1,18 +1,9 @@
 package core
 
 import (
-    "context"
-    "time"
     "sync"
-
-    "golang-system-monitor/internal/storage"
+    "time"
 )
-
-type Publisher interface{
-    Publish(Message)
-    Start(context.Context)  error
-    Stop()                  error
-}
 
 type Subscriber interface{
     ID()                    string
@@ -21,8 +12,15 @@ type Subscriber interface{
     Unsubscribe(*Topic)     error
 }
 
+type Point struct{
+    Timestamp       time.Time
+    Measurement     string
+    Tags            map[string]string
+    Fields          map[string]interface{}
+}
+
 type Storable interface{
-    ToPoint() *storage.Point
+    ToPoint() *Point
 }
 
 type Message struct{
