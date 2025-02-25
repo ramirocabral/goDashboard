@@ -2,17 +2,17 @@
 services:
   influxdb2:
     container_name: influxdb2
-    image: quay.io/influxdb/influxdb:2.0.0-alpha
+    image: influxdb:2.7
     ports:
       - "8086:8086"
     environment:
-      - DOCKER_INFLUXDB_INIT_MODE=setup
-      - DOCKER_INFLUXDB_INIT_USERNAME=admin
-      - DOCKER_INFLUXDB_INIT_PASSWORD=admin
-      - DOCKER_INFLUXDB_INIT_ORG=org1
-      - DOCKER_INFLUXDB_INIT_BUCKET=bucket1
-      - DOCKER_INFLUXDB_INIT_RETENTION=1d
-      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=mytoken
+      - DOCKER_INFLUXDB_INIT_MODE=${INFLUXDB_INIT_MODE}
+      - DOCKER_INFLUXDB_INIT_USERNAME=${INFLUXDB_INIT_USERNAME}
+      - DOCKER_INFLUXDB_INIT_PASSWORD=${INFLUXDB_INIT_PASSWORD}
+      - DOCKER_INFLUXDB_INIT_ORG=${INFLUXDB_INIT_ORG}
+      - DOCKER_INFLUXDB_INIT_BUCKET=${INFLUXDB_INIT_BUCKET}
+      - DOCKER_INFLUXDB_INIT_RETENTION=${INFLUXDB_INIT_RETENTION}
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=${INFLUXDB_INIT_ADMIN_TOKEN}
     volumes:
       - ./influxdb2:/var/lib/influxdb2
     restart: always
