@@ -68,7 +68,7 @@ func ReadMemory() (Memory, error){
         }
 
         output.Used = output.Total - (output.Free + output.Cached + output.Buffers)
-        output.PercentageUsed = (float64(output.Used)/ float64(output.Total)) * 100
+        output.UsedPercentage = (float64(output.Used)/ float64(output.Total)) * 100
     }
 
     return output, nil

@@ -29,7 +29,7 @@ func (ws *WebSocketSubscriber) ID() string{
 }
 
 // handle function, executes when a message is received
-func (ws *WebSocketSubscriber) Handle(msg core.Message){
+func (ws *WebSocketSubscriber) Handle(msg *core.Message){
     ws.Mu.Lock()
     defer ws.Mu.Unlock()
 

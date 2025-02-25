@@ -29,7 +29,7 @@ func (c *CPUCollector) Start(ctx context.Context) error{
                     continue
                 }
                 //create messae struct and send it to the event bus
-                c.EventBus.Topics["cpu"].Messages <- core.Message{
+                c.EventBus.Topics["cpu"].Messages <- &core.Message{
                     Type: "cpu",
                     Timestamp: time.Now(),
                     Data: cpuData,

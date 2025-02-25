@@ -17,7 +17,7 @@ type Host struct{
     Date string
 }
 
-func (h *Host) ToMap() map[string]interface{}{
+func (h Host) ToMap() map[string]interface{}{
     return map[string]interface{}{
         "hostname": h.Hostname,
         "os": h.Os,

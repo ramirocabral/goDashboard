@@ -15,6 +15,7 @@ import (
 	"golang-system-monitor/internal/collector/cpu"
 	"golang-system-monitor/internal/core"
 	"golang-system-monitor/internal/websockets"
+	"golang-system-monitor/internal/storage"
 )
 
 type DatabaseSubscriber struct{
@@ -52,6 +53,18 @@ func main(){
 
     fmt.Println(cpuTopic.Name)
 
+    db, err := storage.New("http://localhost:8086", "mytoken")
+
+    //create bucket
+
+    if err != nil{
+	log.Fatal("Error creating storage: ", err)
+    }
+
+    dbSubscriber := storage.NewStorageSubscriber(db)
+
+    go dbSubscriber.Subscribe(cpuTopic)
+    
     cpuCollector := cpu.NewCpuCollector(2*time.Second, eb)
 
     go cpuCollector.Start(ctx)
@@ -67,8 +80,27 @@ func main(){
 
         go ws.Subscribe(cpuTopic)
 
+
         defer ws.Unsubscribe(cpuTopic)
     })
+
+    //after 1 minute, get the cpu stats
+
+    go func(){
+	ticker := time.NewTicker(20*time.Second)
+	for range ticker.C{
+	    fmt.Println("Getting cpu stats")
+	    stats, err := db.ReadCpuStats(time.Now().Add(-1*time.Minute), time.Now())
+
+	    if err != nil{
+		log.Println("Error getting cpu stats: ", err)
+	    }
+
+	    for _, stat := range stats{
+		fmt.Println(stat.CPUInfo.UsageStatistics.UsagePercentage)
+	    }
+	}
+    }()
 
     log.Fatal(http.ListenAndServe(":8080", nil))
 }

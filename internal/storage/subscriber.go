@@ -24,21 +24,12 @@ func (ss *StorageSubscriber) ID() string{
     return ss.Id
 }
 
-func (ss *StorageSubscriber) Handle(msg core.Message){
+func (ss *StorageSubscriber) Handle(msg *core.Message){
     if _, ok := ss.Topics[msg.Type]; !ok{
         return
     }
 
-    switch msg.Type{
-    case "cpu":
-        ss.Storage.WriteCpuStats(msg.Data)
-    case "memory":
-        ss.Storage.WriteMemoryStats(msg.MemoryStats)
-    case "io":
-        ss.Storage.WriteIOStats(msg.IOStats)
-    case "network":
-        ss.Storage.WriteNetworkStats(msg.NetworkStats)
-    }
+    ss.Storage.WriteStats(msg)
 }
 
 func (ss *StorageSubscriber) Subscribe(topic *core.Topic) error{

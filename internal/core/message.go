@@ -14,7 +14,7 @@ type Publisher interface{
 
 type Subscriber interface{
     ID()                    string
-    Handle(Message)
+    Handle(*Message)
     Subscribe(*Topic)       error
     Unsubscribe(*Topic)     error
 }
@@ -34,7 +34,7 @@ type Topic struct{
     Name        string
     Subscribers map[string]Subscriber
     Mu          sync.RWMutex               
-    Messages    chan Message
+    Messages    chan *Message
 }
 
 // the eventbus is the main component of the system, it holds all the topics and dispatches the messages to the subscribers
@@ -85,7 +85,7 @@ func (eb *EventBus) AddTopic(name string){
         eb.Topics[name] = &Topic{
             Name: name,
             Subscribers: make(map[string]Subscriber),
-            Messages: make(chan Message),
+            Messages: make(chan *Message),
         }
     }
 }
@@ -98,7 +98,7 @@ func (eb *EventBus) CreateTopic(name string) *Topic{
     topic := &Topic{
         Name: name,
         Subscribers: make(map[string]Subscriber),
-        Messages: make(chan Message, 1000),
+        Messages: make(chan *Message, 1000),
     }
 
     eb.Topics[name] = topic
