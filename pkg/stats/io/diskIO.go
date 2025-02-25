@@ -6,6 +6,7 @@ import (
     "strings"
 
     "golang-system-monitor/internal/utils"
+    "golang-system-monitor/internal/storage"
 )
 
 type DiskIO struct {
@@ -19,13 +20,10 @@ type BytesStore struct{
     WriteBytes  uint64
 }
 
-func (d *DiskIO) ToMap() map[string]interface{}{
-    return map[string]interface{}{
-        "device": d.Device,
-        "kb_read_per_second": d.ReadPerSecond,
-        "kb_write_per_second": d.WritePerSecond,
-    }
+func (d *DiskIO) ToPoint() *storage.Point{
+    
 }
+
 
 var lastDiskData = map[string]BytesStore{}
 

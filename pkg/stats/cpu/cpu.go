@@ -1,13 +1,14 @@
 package cpu
 
 import (
-	"log"
-	"strings"
-	"time"
+    "log"
+    "strings"
+    "time"
 
-	"golang-system-monitor/internal/utils"
+    "golang-system-monitor/internal/utils"
+    "golang-system-monitor/internal/storage"
 
-	"github.com/shirou/gopsutil/v3/cpu"
+    "github.com/shirou/gopsutil/v3/cpu"
 )
 
 type CPU struct{
@@ -21,6 +22,21 @@ type CPU struct{
 type Usage struct{
     UsagePercentage float64     `json:"usage_percentage"`
     IdlePercentage float64      `json:"idle_percentage"`
+}
+
+func (c CPU) ToPoint() *storage.Point{
+    return &storage.Point{
+        Timestamp: time.Now(),
+        Measurement: "cpu",
+        Tags: map[string]string{
+            "model_name": c.ModelName,
+        },
+        Fields: map[string]interface{}{
+            "temp" : c.Temp,
+            "usage_percentage": c.UsageStatistics.UsagePercentage,
+            "idle_percentage": c.UsageStatistics.IdlePercentage,
+        },
+    } 
 }
 
 func (c CPU) ToMap() map[string]interface{}{

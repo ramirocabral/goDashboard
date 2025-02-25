@@ -25,7 +25,6 @@ type Storable interface{
 
 type Message struct{
     Type            string
-    Timestamp       time.Time
     Data            Storable
 }
 

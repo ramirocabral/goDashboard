@@ -1,8 +1,6 @@
 package storage
 
 import (
-    // "log"
-
     "golang-system-monitor/internal/core"
 )
 

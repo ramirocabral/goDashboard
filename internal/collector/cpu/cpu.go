@@ -4,7 +4,7 @@ import(
     "log"
     "context"
     "time"
-    "golang-system-monitor/internal/stats/cpu"
+    "golang-system-monitor/pkg/stats/cpu"
     "golang-system-monitor/internal/core"
 )
 
@@ -31,7 +31,6 @@ func (c *CPUCollector) Start(ctx context.Context) error{
                 //create messae struct and send it to the event bus
                 c.EventBus.Topics["cpu"].Messages <- &core.Message{
                     Type: "cpu",
-                    Timestamp: time.Now(),
                     Data: cpuData,
                 }
         }
