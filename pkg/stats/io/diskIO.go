@@ -2,11 +2,12 @@ package io
 
 //get write/read per second on disks
 import (
-    "errors"
-    "strings"
+	"errors"
+	"strings"
+	"time"
 
-    "golang-system-monitor/internal/utils"
-    "golang-system-monitor/internal/storage"
+	"golang-system-monitor/internal/storage"
+	"golang-system-monitor/internal/utils"
 )
 
 type DiskIO struct {
@@ -21,7 +22,17 @@ type BytesStore struct{
 }
 
 func (d *DiskIO) ToPoint() *storage.Point{
-    
+    return &storage.Point{
+        Timestamp: time.Now(),
+        Measurement: "io",
+        Tags: map[string]string{
+            "device": d.Device,
+        },
+        Fields: map[string]interface{}{
+            "kb_read_per_second" : d.ReadPerSecond,
+            "kb_write_per_second": d.WritePerSecond,
+        },
+    }     
 }
 
 

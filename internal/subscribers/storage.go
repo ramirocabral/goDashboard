@@ -1,16 +1,17 @@
-package storage
+package subscribers
 
 import (
     "golang-system-monitor/internal/core"
+    "golang-system-monitor/internal/storage"
 )
 
 type StorageSubscriber struct{
     Id          string
-    Storage     Storage
+    Storage     storage.Storage
     Topics      map[string]*core.Topic
 }
 
-func NewStorageSubscriber(storage Storage) *StorageSubscriber{
+func NewStorageSubscriber(storage storage.Storage) *StorageSubscriber{
     return &StorageSubscriber{
         Id: storage.ID(),
         Storage: storage,
@@ -27,7 +28,7 @@ func (ss *StorageSubscriber) Handle(msg *core.Message){
         return
     }
 
-    ss.Storage.WriteStats(msg)
+    ss.Storage.WriteStats(msg.Data.ToPoint())
 }
 
 func (ss *StorageSubscriber) Subscribe(topic *core.Topic) error{

@@ -4,6 +4,8 @@ import (
     "context"
     "time"
     "sync"
+
+    "golang-system-monitor/internal/storage"
 )
 
 type Publisher interface{
@@ -20,7 +22,7 @@ type Subscriber interface{
 }
 
 type Storable interface{
-    ToMap() map[string]interface{}
+    ToPoint() *storage.Point
 }
 
 type Message struct{

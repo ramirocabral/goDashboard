@@ -73,7 +73,7 @@ type NetworkPoint struct{
 
 type Storage interface{
     ID() string
-    WriteStats(m *core.Message)
+    WriteStats(point *Point) error
     ReadCpuStats(startTime, endTime time.Time) (CPUResponse, error)
     ReadIOStats(startTime, endTime time.Time) (IOResponse, error)
     ReadMemoryStats(startTime, endTime time.Time) (MemoryResponse, error)
