@@ -60,12 +60,13 @@ type MemoryPoint struct{
 }
 
 type NetworkResponse struct{
-    Data        []NetworkStats  `json:"data"`
+    Interfaces        []NetworkStats  `json:"interfaces"`
 }
 
 type NetworkStats struct{
     Interface       string          `json:"interface"`
     Ip              string          `json:"ip"`
+    Data            []NetworkPoint  `json:"data"` 
 } 
 
 type NetworkPoint struct{

@@ -54,6 +54,7 @@ func (s *InfluxStore) ReadCpuStats(startTime, endTime time.Time) (storage.CPURes
             |> keep(columns: ["_time", "model_name", "temp", "usage_percentage", "idle_percentage"]) `, startTime.UTC().Format(time.RFC3339), endTime.UTC().Format(time.RFC3339))
 
     result, err := s.queryAPI.Query(context.Background(), query)
+
     if err != nil {
         return nil, err
     }
@@ -67,30 +68,39 @@ func (s *InfluxStore) ReadCpuStats(startTime, endTime time.Time) (storage.CPURes
     return stats, nil
 }
 
-func parseCpuStats(result *api.QueryTableResult) []CPUStats{
+func parseCpuStats(result *api.QueryTableResult) storage.CPUResponse{
 
-    var stats []CPUStats
+    stats := storage.CPUResponse{}
+
+    values := result.Record().Values()
+
+    if result.Next() {
+        stats.ModelName = values["model_name"].(string)
+        stats.Cores = uint64(values["cores"].(uint64))
+        stats.Threads = uint64(values["threads"].(uint64))
+
+        point := storage.CPUPoint{
+            Timestamp: values["_time"].(time.Time),
+            UsagePercentage: values["usage_percentage"].(float64),
+            IdlePercentage: values["idle_percentage"].(float64),
+        }
+
+
+        stats.Data = append(stats.Data, point)
+    }
+
+
 
     for result.Next() {
         values := result.Record().Values()
 
-        cpu := cpu.CPU{
-            ModelName: values["model_name"].(string),
-            Cores:     uint64(values["cores"].(uint64)),
-            Threads:   uint64(values["threads"].(uint64)),
-            Temp:      uint64(values["temp"].(uint64)),
-            UsageStatistics: cpu.Usage{
-                UsagePercentage: values["usage_percentage"].(float64),
-                IdlePercentage:  values["idle_percentage"].(float64),
-            },
-        }
-
-        stat := CPUStats{
+        point := storage.CPUPoint{
             Timestamp: values["_time"].(time.Time),
-            CPUInfo:       cpu,
+            UsagePercentage: values["usage_percentage"].(float64),
+            IdlePercentage: values["idle_percentage"].(float64),
         }
 
-        stats = append(stats, stat)
+        stats.Data = append(stats.Data, point)
     }
 
     return stats

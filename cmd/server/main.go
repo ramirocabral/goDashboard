@@ -14,8 +14,8 @@ import (
 
 	"golang-system-monitor/internal/collector/cpu"
 	"golang-system-monitor/internal/core"
-	"golang-system-monitor/internal/websockets"
-	"golang-system-monitor/internal/storage"
+	"golang-system-monitor/internal/influxdb"
+	"golang-system-monitor/internal/subscribers"
 )
 
 type DatabaseSubscriber struct{
@@ -43,7 +43,6 @@ type dbConfig struct{
     bucket  string
 }
 
-
 func main(){
 
     ctx := context.Background()
@@ -53,7 +52,7 @@ func main(){
 
     fmt.Println(cpuTopic.Name)
 
-    db, err := storage.New("http://localhost:8086", "mytoken")
+    db, err := influxdb.New("http://localhost:8086", "mytoken")
 
     //create bucket
 
@@ -61,7 +60,7 @@ func main(){
 	log.Fatal("Error creating storage: ", err)
     }
 
-    dbSubscriber := storage.NewStorageSubscriber(db)
+    dbSubscriber := subscribers.NewStorageSubscriber(db)
 
     go dbSubscriber.Subscribe(cpuTopic)
     
@@ -76,7 +75,7 @@ func main(){
             return
         }
 
-        ws := websockets.NewWebSocketSubscriber(conn)
+        ws := subscribers.NewWebSocketSubscriber(conn)
 
         go ws.Subscribe(cpuTopic)
 
