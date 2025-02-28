@@ -6,11 +6,13 @@ import (
 	"strings"
 	"time"
 
-	"golang-system-monitor/internal/storage"
 	"golang-system-monitor/internal/utils"
+	"golang-system-monitor/internal/core"
 )
 
-type DiskIO struct {
+type DiskIO []Disk
+
+type Disk struct {
     Device          string      `json:"device"`
     ReadPerSecond   uint64      `json:"kb_read_per_second"`
     WritePerSecond  uint64      `json:"kb_write_per_second"`
@@ -21,26 +23,32 @@ type BytesStore struct{
     WriteBytes  uint64
 }
 
-func (d *DiskIO) ToPoint() *storage.Point{
-    return &storage.Point{
-        Timestamp: time.Now(),
-        Measurement: "io",
-        Tags: map[string]string{
-            "device": d.Device,
-        },
-        Fields: map[string]interface{}{
-            "kb_read_per_second" : d.ReadPerSecond,
-            "kb_write_per_second": d.WritePerSecond,
-        },
-    }     
+func (d *DiskIO) ToPoint() []*core.Point{
+
+    var points []*core.Point
+
+    for _, disk := range *d{
+        point := &core.Point{
+            Timestamp: time.Now(),
+            Measurement: "io",
+            Tags: map[string]string{
+                "device": disk.Device,
+            },
+            Fields: map[string]interface{}{
+                "read_bytes": disk.ReadPerSecond,
+                "write_bytes": disk.WritePerSecond,
+            },
+        }
+        points = append(points, point)
+    }
+    return points
 }
 
 
 var lastDiskData = map[string]BytesStore{}
 
-
 //this function is called every 1 second so the stats are actually accurate
-func ReadDiskIO() ([]DiskIO, error) {
+func ReadDiskIO() (DiskIO, error) {
     diskData, err := utils.ExecuteCommand("iostat", "-d", "-x")
     diskDataSplit := strings.Split(string(diskData), "\n")[3:]
 
@@ -48,7 +56,7 @@ func ReadDiskIO() ([]DiskIO, error) {
         return nil, errors.New("error reading disk data")
     }
 
-    var disks []DiskIO
+    var disks DiskIO
 
     for _, line := range diskDataSplit {
 
@@ -62,7 +70,7 @@ func ReadDiskIO() ([]DiskIO, error) {
         rxBytes := utils.StrToUint64(fields[2])
         txBytes := utils.StrToUint64(fields[8])
 
-        disk := DiskIO{}
+        disk := Disk{}
 
         disk.Device = devName
         //get the bytes per second

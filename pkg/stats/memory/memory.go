@@ -1,10 +1,12 @@
 package memory
 
-import(
-    "log"
-    "strings"
+import (
+	"log"
+	"strings"
+	"time"
 
-    "golang-system-monitor/internal/utils"
+	"golang-system-monitor/internal/core"
+	"golang-system-monitor/internal/utils"
 )
 
 type Memory struct{
@@ -18,16 +20,22 @@ type Memory struct{
     Cached uint64           `json:"cached"`
 }
 
-func (m *Memory) ToMap() map[string]interface{}{
-    return map[string]interface{}{
-        "used_percentage": m.UsedPercentage,
-        "total": m.Total,
-        "used": m.Used,
-        "free": m.Free,
-        "active": m.Active,
-        "inactive": m.Inactive,
-        "buffers": m.Buffers,
-        "cached": m.Cached,
+func (m *Memory) ToPoint() []*core.Point{
+    return []*core.Point{{
+        Timestamp: time.Now(),
+        Measurement: "memory",
+        Tags: map[string]string{}, 
+        Fields: map[string]interface{}{
+            "used_percentage": m.UsedPercentage,
+            "total": m.Total,
+            "used": m.Used,
+            "free": m.Free,
+            "active": m.Active,
+            "inactive": m.Inactive,
+            "buffers": m.Buffers,
+            "cached": m.Cached,
+            },
+        },
     }
 }
 

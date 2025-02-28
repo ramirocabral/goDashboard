@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 
-	// "fmt"
 	"log"
 	"net/http"
 	"time"
@@ -47,13 +46,9 @@ func main(){
 
     ctx := context.Background()
     eb := core.NewEventBus()
-
     cpuTopic := eb.CreateTopic("cpu")
-
     fmt.Println(cpuTopic.Name)
-
-    db, err := influxdb.New("http://localhost:8086", "mytoken")
-
+    db, err := influxdb.New("http://localhost:8086", "mytoken","my-org", "mybucket")
     //create bucket
 
     if err != nil{
@@ -82,24 +77,6 @@ func main(){
 
         defer ws.Unsubscribe(cpuTopic)
     })
-
-    //after 1 minute, get the cpu stats
-
-    go func(){
-	ticker := time.NewTicker(20*time.Second)
-	for range ticker.C{
-	    fmt.Println("Getting cpu stats")
-	    stats, err := db.ReadCpuStats(time.Now().Add(-1*time.Minute), time.Now())
-
-	    if err != nil{
-		log.Println("Error getting cpu stats: ", err)
-	    }
-
-	    for _, stat := range stats{
-		fmt.Println(stat.CPUInfo.UsageStatistics.UsagePercentage)
-	    }
-	}
-    }()
 
     log.Fatal(http.ListenAndServe(":8080", nil))
 }

@@ -19,8 +19,9 @@ type Point struct{
     Fields          map[string]interface{}
 }
 
+// not sure if it is the best implementation, but it solves my several dependency issues
 type Storable interface{
-    ToPoint() *Point
+    ToPoint() []*Point
 }
 
 type Message struct{
@@ -42,14 +43,12 @@ type EventBus struct{
     Mu      sync.RWMutex
 }
 
-// adds a subscriber to the topic
 func (t *Topic) AddSubscriber(sub Subscriber){
     t.Mu.Lock()
     defer t.Mu.Unlock()
     t.Subscribers[sub.ID()] = sub
 }
 
-// removes a subscriber from the topic
 func (t *Topic) RemoveSubscriber(sub Subscriber){
     t.Mu.Lock()
     defer t.Mu.Unlock()
@@ -57,7 +56,6 @@ func (t *Topic) RemoveSubscriber(sub Subscriber){
     delete(t.Subscribers, sub.ID())
 }
 
-//constructor
 func NewEventBus() *EventBus{
     return &EventBus{
         Topics: make(map[string]*Topic),
@@ -75,7 +73,7 @@ func (t *Topic) dispatch(){
     }
 }
 
-// add a new topic to the event bus, so the Subscribers can subscribe to it
+// add a new topic to the event bus, so the subscribers can subscribe to it
 func (eb *EventBus) AddTopic(name string){
     eb.Mu.Lock()
     defer eb.Mu.Unlock()

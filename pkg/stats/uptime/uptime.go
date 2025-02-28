@@ -3,8 +3,10 @@ package uptime
 import (
 	"errors"
 	"strings"
+	"time"
 
 	"golang-system-monitor/internal/utils"
+	"golang-system-monitor/internal/core"
 )
 
 
@@ -12,9 +14,14 @@ type Uptime struct{
     Uptime uint64   `json:"uptime"`
 }
 
-func (u *Uptime) ToMap() map[string]interface{}{
-	return map[string]interface{}{
-		"uptime": u.Uptime,
+func (u *Uptime) ToPoint() []*core.Point{
+	return []*core.Point{{
+		Timestamp: time.Now(),
+		Measurement: "uptime",
+		Fields: map[string]interface{}{
+			"uptime": u.Uptime,
+		},
+	} ,
 	}
 }
 

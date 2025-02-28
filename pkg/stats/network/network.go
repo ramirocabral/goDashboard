@@ -5,7 +5,10 @@ import (
 	"strings"
 
 	"golang-system-monitor/internal/utils"
+	"golang-system-monitor/internal/core"
 )
+
+type Networks []Network
 
 type Network struct {
     Interface       string        `json:"interface"`
@@ -23,25 +26,37 @@ type ByteStore struct {
     TxBytes uint64      //transmitted bytes on last check
 }
 
-func (n *Network) ToMap() map[string]interface{}{
-    return map[string]interface{}{
-        "interface": n.Interface,
-        "ip": n.Ip,
-        "usage": n.Usage,
+func (n *Networks) ToPoint() *[]core.Point{
+    var points []core.Point
+
+    for _, network := range *n{
+        point := core.Point{
+            Measurement: "network",
+            Tags: map[string]string{
+                "interface": network.Interface,
+                "ip": network.Ip,
+            },
+            Fields: map[string]interface{}{
+                "rx_bytes_ps": network.Usage.RxBytesPS,
+                "tx_bytes_ps": network.Usage.TxBytesPS,
+            },
+        }
+        points = append(points, point)
     }
 
+    return &points
 }
 
 var lastNetworkData = map[string]ByteStore{}
 
-func ReadNetworks() ([]Network, error){
-    output := []Network{}
+func ReadNetworks() (Networks, error){
+    output := Networks{}
 
     command := "ip -o addr show scope global | awk '{split($4, a, \"/\"); print $2\" : \"a[1]}'"
 
     data, err := utils.ExecuteCommandWithPipe(command)
     if err != nil{
-        return []Network{}, err
+        return output, err
     }
 
     dataSplit := strings.Split(string(data), "\n")

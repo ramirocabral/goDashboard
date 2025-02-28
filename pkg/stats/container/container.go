@@ -8,6 +8,8 @@ import (
 	"github.com/docker/docker/client"
 )
 
+type Containers []Container
+
 type Container struct{
     Name    string  `json:"name"`
     Status  string  `json:"status"`
@@ -15,8 +17,8 @@ type Container struct{
     Image   string  `json:"image"`  
 }
 
-func ReadContainers() ([]Container, error){
-    output := []Container{}
+func ReadContainers() (Containers, error){
+    output := Containers{}
 
     cli, err := client.NewClientWithOpts(client.FromEnv)
     if err != nil{

@@ -9,23 +9,12 @@ import (
     "golang-system-monitor/internal/utils"
 )
 
-
 type Host struct{
     Hostname string
     Os string
     Kernel string
     Date string
 }
-
-func (h Host) ToMap() map[string]interface{}{
-    return map[string]interface{}{
-        "hostname": h.Hostname,
-        "os": h.Os,
-        "kernel": h.Kernel,
-        "date": h.Date,
-    }
-}
-
 
 const HOSTNAME_PATH = "/proc/sys/kernel/hostname"
 const OS_PATH = "/etc/os-release"

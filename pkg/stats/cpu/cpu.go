@@ -24,8 +24,8 @@ type Usage struct{
     IdlePercentage float64      `json:"idle_percentage"`
 }
 
-func (c CPU) ToPoint() *core.Point{
-    return &core.Point{
+func (c CPU) ToPoint() []*core.Point{
+    return []*core.Point{{
         Timestamp: time.Now(),
         Measurement: "cpu",
         Tags: map[string]string{
@@ -36,7 +36,8 @@ func (c CPU) ToPoint() *core.Point{
             "usage_percentage": c.UsageStatistics.UsagePercentage,
             "idle_percentage": c.UsageStatistics.IdlePercentage,
         },
-    } 
+    } ,
+    }
 }
 
 func (c CPU) ToMap() map[string]interface{}{
