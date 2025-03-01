@@ -104,3 +104,12 @@ func (eb *EventBus) CreateTopic(name string) *Topic{
 
     return topic
 }
+
+func (eb *EventBus) Publish(name string, msg *Message){
+    eb.Mu.RLock()
+    defer eb.Mu.RUnlock()
+
+    if topic, ok := eb.Topics[name]; ok{
+        topic.Messages <- msg
+    }
+}
