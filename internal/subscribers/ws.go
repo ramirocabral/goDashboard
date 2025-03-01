@@ -56,7 +56,6 @@ func (ws *WebSocketSubscriber) Subscribe(topic *core.Topic) error{
 
     ws.Topics[topic.Name] = topic
 
-    //add the ws to the topic's subscribers
     topic.AddSubscriber(ws)
 
     return nil

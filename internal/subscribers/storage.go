@@ -30,10 +30,7 @@ func (ss *StorageSubscriber) Handle(msg *core.Message){
 
     point := msg.Data.ToPoint()
 
-    err := ss.Storage.WriteStats(point)
-    if err != nil{
-        return
-    }
+    ss.Storage.WriteStats(point)
 }
 
 func (ss *StorageSubscriber) Subscribe(topic *core.Topic) error{

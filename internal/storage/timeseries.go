@@ -13,4 +13,5 @@ type Storage interface{
     ReadIOStats(startTime, endTime time.Time) (IOResponse, error)
     ReadMemoryStats(startTime, endTime time.Time) (MemoryResponse, error)
     ReadNetworkStats(startTime, endTime time.Time) (NetworkResponse, error)
+    Close()
 }

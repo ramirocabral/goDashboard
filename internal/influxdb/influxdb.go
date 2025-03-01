@@ -19,7 +19,6 @@ type InfluxStore struct{
     bucket	string
 }
 
-
 func New(addr, token, org, bucket string) (storage.Storage, error) {
     client := influxdb2.NewClient(addr, token)
     writeAPI := client.WriteAPI(org,bucket)
@@ -30,6 +29,10 @@ func New(addr, token, org, bucket string) (storage.Storage, error) {
         queryAPI: queryAPI,
 	bucket: bucket,
     }, nil
+}
+
+func (s *InfluxStore) Close(){
+    s.client.Close()
 }
 
 func (s *InfluxStore) ID() string{
