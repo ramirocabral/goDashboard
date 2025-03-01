@@ -7,6 +7,8 @@ import (
     "golang-system-monitor/internal/utils"
 )
 
+type Disks []Disk
+
 type Disk struct {
     Device          string
     Type            string
@@ -17,7 +19,7 @@ type Disk struct {
     UsedPercentage  uint64
 }    
 
-func ReadDisks() ([]Disk, error) {
+func ReadDisks() (Disks, error) {
     diskData, err := utils.ExecuteCommand("df","-T","-BG","--exclude-type=tmpfs","--exclude-type=devtmpfs","--exclude-type=cifs","--exclude-type=efivarfs")
     diskDataSplit := strings.Split(string(diskData), "\n")[1:]
 
@@ -25,7 +27,7 @@ func ReadDisks() ([]Disk, error) {
         return nil, errors.New("error reading disk data")
     }
 
-    var disks []Disk
+    var disks Disks
 
     for _, line := range diskDataSplit {
         fields := strings.Fields(line)

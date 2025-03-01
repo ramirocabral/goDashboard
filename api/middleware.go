@@ -3,15 +3,12 @@ package api
 
 import (
     "net/http"
-    "log"
 )
 
-//gorilla mux logging middleware
-func LoggingMiddleware(next http.Handler) http.Handler {
+func (app *app) LoggingMiddleware(next http.Handler) http.Handler {
+    //type  conversion from a function to a handler
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        // Do stuff here
-        log.Printf("Request URI: %s", r.RequestURI)
-        next.ServeHTTP(w, r) // Call the next handler
+        app.logger.Infow(r.Method, r.URL.Path, r.RemoteAddr, r.UserAgent())
+        next.ServeHTTP(w, r)
     })
 }
-

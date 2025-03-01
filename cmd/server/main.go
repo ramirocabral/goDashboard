@@ -2,8 +2,6 @@ package main
 
 import (
 	"context"
-	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -24,8 +22,6 @@ var upgrader = websocket.Upgrader{
     WriteBufferSize: 1024,
 }
 
-// logger        *zap.SugaredLogger
-
 func main(){
 
     cfg :=  configuration.GetConfig()
@@ -38,7 +34,7 @@ func main(){
 
     //database
     db, err := influxdb.New(
-	cfg.DB.Addr
+	cfg.DB.Addr,
 	cfg.DB.Token,
 	cfg.DB.Org,
 	cfg.DB.Bucket,
@@ -74,3 +70,6 @@ func main(){
 
     log.Fatal(http.ListenAndServe(":8080", nil))
 }
+// create event bus
+// create topics and assign it to the event bus
+// create collectors

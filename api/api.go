@@ -14,7 +14,13 @@ type app struct{
     logger  *zap.SugaredLogger
     store   storage.Storage
     eb      *core.EventBus
-    cpuCollector *cpu.CPUCollector
 }
 
-
+func NewApp(cfg configuration.Config, logger *zap.SugaredLogger, store storage.Storage, eb *core.EventBus, cpuCollector *cpu.CPUCollector) *app{
+    return &app{
+    cfg: cfg,
+    logger: logger,
+    store: store,
+    eb: eb,
+    }
+}
