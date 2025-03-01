@@ -18,6 +18,7 @@ func (u *Uptime) ToPoint() []*core.Point{
 	return []*core.Point{{
 		Timestamp: time.Now(),
 		Measurement: "uptime",
+		Tags: map[string]string{},
 		Fields: map[string]interface{}{
 			"uptime": u.Uptime,
 		},

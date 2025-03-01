@@ -4,8 +4,6 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"time"
-
 	// "github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 
@@ -15,8 +13,6 @@ import (
 	"golang-system-monitor/internal/influxdb"
 	"golang-system-monitor/internal/logger"
 	"golang-system-monitor/internal/subscribers"
-
-	"go.uber.org/zap"
 )
 
 var upgrader = websocket.Upgrader{

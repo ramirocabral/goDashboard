@@ -20,7 +20,7 @@ type Memory struct{
     Cached uint64           `json:"cached"`
 }
 
-func (m *Memory) ToPoint() []*core.Point{
+func (m Memory) ToPoint() []*core.Point{
     return []*core.Point{{
         Timestamp: time.Now(),
         Measurement: "memory",

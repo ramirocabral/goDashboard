@@ -1,13 +1,14 @@
 package container
 
 import (
-    "context"
-    "log"
+	"context"
+	"log"
+	"time"
 
-    "github.com/docker/docker/api/types/container"
-    "github.com/docker/docker/client"
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/client"
 
-    "golang-system-monitor/internal/core"
+	"golang-system-monitor/internal/core"
 )
 
 type Containers []Container     
@@ -19,19 +20,23 @@ type Container struct{
     Image   string  `json:"image"`  
 }
 
-func (c Container) ToPoint() []*core.Point{
-    return []*core.Point{{
-        Measurement: "container",
-        Tags: map[string]string{
-            "name": c.Name,
-        },
-        Fields: map[string]interface{}{
-            "status": c.Status,
-            "uptime": c.Uptime,
-            "image": c.Image,
-        },
-    },
+func (c Containers) ToPoint() []*core.Point{
+    output := []*core.Point{}
+
+    for _, container := range c{
+        output = append(output, &core.Point{
+            Timestamp: time.Now(),
+            Measurement: "container",
+            Tags: map[string]string{},
+            Fields: map[string]interface{}{
+                "name": container.Name,
+                "status": container.Status,
+                "uptime": container.Uptime,
+                "image": container.Image,
+            },
+        })
     }
+    return output
 }
 
 func ReadContainers() (Containers, error){

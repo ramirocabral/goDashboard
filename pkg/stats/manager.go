@@ -18,7 +18,7 @@ func NewStatsManager() *StatsManager {
     return &StatsManager{}
 }
 
-func (sm *StatsManager) GetContainerStats() (container.Containers, error) {
+func (sm *StatsManager) GetContainers() (container.Containers, error) {
     return container.ReadContainers()
 }
 

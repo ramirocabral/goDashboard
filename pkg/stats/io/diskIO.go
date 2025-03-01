@@ -23,11 +23,11 @@ type BytesStore struct{
     WriteBytes  uint64
 }
 
-func (d *DiskIO) ToPoint() []*core.Point{
+func (d DiskIO) ToPoint() []*core.Point{
 
     var points []*core.Point
 
-    for _, disk := range *d{
+    for _, disk := range d{
         point := &core.Point{
             Timestamp: time.Now(),
             Measurement: "io",

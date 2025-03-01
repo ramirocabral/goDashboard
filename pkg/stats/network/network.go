@@ -26,11 +26,11 @@ type ByteStore struct {
     TxBytes uint64      //transmitted bytes on last check
 }
 
-func (n *Networks) ToPoint() *[]core.Point{
-    var points []core.Point
+func (n Networks) ToPoint() []*core.Point{
+    var points []*core.Point
 
-    for _, network := range *n{
-        point := core.Point{
+    for _, network := range n{
+        point := &core.Point{
             Measurement: "network",
             Tags: map[string]string{
                 "interface": network.Interface,
@@ -44,7 +44,7 @@ func (n *Networks) ToPoint() *[]core.Point{
         points = append(points, point)
     }
 
-    return &points
+    return points
 }
 
 var lastNetworkData = map[string]ByteStore{}
