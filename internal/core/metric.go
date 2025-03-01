@@ -3,6 +3,7 @@ package core
 import (
     "time"
     "context"
+    "golang-system-monitor/internal/logger"
 )
 
 type Collector interface{
@@ -29,7 +30,8 @@ func (mc *MetricCollector) Start(ctx context.Context) error {
             case <-ticker.C:
                 data, err := mc.Collector.Collect()
                 if err != nil {
-                    return err
+                    logger.GetLogger().Error("Error collecting data: ", err)
+                    continue
                 }
                 mc.EventBus.Publish(mc.Collector.GetTopic(), &Message{
                     Type: mc.Collector.GetTopic(),
@@ -38,5 +40,3 @@ func (mc *MetricCollector) Start(ctx context.Context) error {
         }
     }
 }
-
-

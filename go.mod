@@ -5,7 +5,6 @@ go 1.23.4
 require (
 	github.com/anatol/smart.go v0.0.0-20241126061019-f03d79b340d2
 	github.com/docker/docker v28.0.0+incompatible
-	github.com/gorilla/mux v1.8.1
 	github.com/gorilla/websocket v1.5.3
 	github.com/influxdata/influxdb-client-go/v2 v2.14.0
 	github.com/shirou/gopsutil/v3 v3.24.5
