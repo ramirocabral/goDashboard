@@ -3,6 +3,7 @@ package core
 import (
     "sync"
     "time"
+    "golang-system-monitor/internal/logger"
 )
 
 type Subscriber interface{
@@ -82,7 +83,7 @@ func (eb *EventBus) AddTopic(name string){
         eb.Topics[name] = &Topic{
             Name: name,
             Subscribers: make(map[string]Subscriber),
-            Messages: make(chan *Message),
+            Messages: make(chan *Message, 100),
         }
     }
 }
@@ -95,7 +96,7 @@ func (eb *EventBus) CreateTopic(name string) *Topic{
     topic := &Topic{
         Name: name,
         Subscribers: make(map[string]Subscriber),
-        Messages: make(chan *Message, 1000),
+        Messages: make(chan *Message, 100),
     }
 
     eb.Topics[name] = topic
@@ -105,11 +106,17 @@ func (eb *EventBus) CreateTopic(name string) *Topic{
     return topic
 }
 
+//publishes a message to a specific topic
 func (eb *EventBus) Publish(name string, msg *Message){
     eb.Mu.RLock()
     defer eb.Mu.RUnlock()
 
     if topic, ok := eb.Topics[name]; ok{
-        topic.Messages <- msg
+        select{
+            case topic.Messages <- msg:
+            //if the channel is full
+            default:
+            logger.GetLogger().Errorf("Message queue is full for topic: %s", name)
+        }
     }
 }

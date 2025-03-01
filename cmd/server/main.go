@@ -1,18 +1,21 @@
 package main
 
 import (
-	"context"
-	"log"
-	"net/http"
-	// "github.com/gorilla/mux"
-	"github.com/gorilla/websocket"
+    "context"
+    "log"
+    "net/http"
+    "time"
 
-	// "golang-system-monitor/internal/collector/cpu"
-	"golang-system-monitor/internal/configuration"
-	"golang-system-monitor/internal/core"
-	"golang-system-monitor/internal/influxdb"
-	"golang-system-monitor/internal/logger"
-	"golang-system-monitor/internal/subscribers"
+    // "github.com/gorilla/mux"
+    "github.com/gorilla/websocket"
+
+    "golang-system-monitor/internal/collector"
+    "golang-system-monitor/internal/configuration"
+    "golang-system-monitor/internal/core"
+    "golang-system-monitor/internal/influxdb"
+    "golang-system-monitor/internal/logger"
+    "golang-system-monitor/internal/subscribers"
+    "golang-system-monitor/pkg/stats"
 )
 
 var upgrader = websocket.Upgrader{
@@ -21,12 +24,7 @@ var upgrader = websocket.Upgrader{
 }
 
 func main(){
-
     cfg :=  configuration.GetConfig()
-
-    // ctx := context.Background()
-    eb := core.NewEventBus()
-    cpuTopic := eb.CreateTopic("cpu")
 
     //database
     db, err := influxdb.New(
@@ -41,12 +39,22 @@ func main(){
     logger.GetLogger().Infof("Connected to database: %s", cfg.DB.Addr)
     defer db.Close()
 
+    statsManager := stats.NewStatsManager()
+    ctx := context.Background()
+    eb := core.NewEventBus()
+
+    cpuTopic := eb.CreateTopic("cpu")
+    memTopic := eb.CreateTopic("memory")
+    ioTopic := eb.CreateTopic("io")
+    containerTopic := eb.CreateTopic("container")
+    _ = containerTopic
+
     dbSubscriber := subscribers.NewStorageSubscriber(db)
     go dbSubscriber.Subscribe(cpuTopic)
-    
-    // //collectors
-    // cpuCollector := cpu.NewCpuCollector(2*time.Second, eb)
-    // go cpuCollector.Start(ctx)
+    go dbSubscriber.Subscribe(memTopic)
+    go dbSubscriber.Subscribe(ioTopic)
+
+    initCollectors(eb, statsManager, ctx)
     //
     //
     // http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request){
@@ -66,6 +74,35 @@ func main(){
     //
     log.Fatal(http.ListenAndServe(":8080", nil))
 }
-// create event bus
-// create topics and assign it to the event bus
-// create collectors
+
+func initCollectors(eb *core.EventBus, statsManager *stats.StatsManager, ctx context.Context){
+    logger.GetLogger().Info("Initializing collectors")
+    cpuMetricCollector := core.NewMetricCollector(
+	time.Duration(time.Second*1),
+	eb,
+	collector.NewCPUCollector(statsManager),
+    )
+
+    memMetricCollector := core.NewMetricCollector(
+	time.Duration(time.Second*2),
+	eb,
+	collector.NewMemoryCollector(statsManager),
+    )
+
+    ioMetricCollector := core.NewMetricCollector(
+	time.Duration(time.Second*1),
+	eb,
+	collector.NewIOCollector(statsManager),
+    )
+
+    containerMetricCollector := core.NewMetricCollector(
+	time.Duration(time.Second*1),
+	eb,
+	collector.NewContainerCollector(statsManager),
+    )
+
+    go cpuMetricCollector.Start(ctx)
+    go memMetricCollector.Start(ctx)
+    go ioMetricCollector.Start(ctx)
+    go containerMetricCollector.Start(ctx)
+}

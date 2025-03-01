@@ -13,10 +13,12 @@ type app struct{
     eb      *core.EventBus
 }
 
-func NewApp(cfg configuration.Config,store storage.Storage, eb *core.EventBus, cpuCollector *cpu.CPUCollector) *app{
+func NewApp(cfg configuration.Config,store storage.Storage, eb *core.EventBus) *app{
     return &app{
-    cfg: cfg,
-    store: store,
-    eb: eb,
+	cfg: cfg,
+	store: store,
+	eb: eb,
     }
 }
+
+

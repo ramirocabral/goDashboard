@@ -18,11 +18,20 @@ type MetricCollector struct{
     Collector   Collector
 }
 
+func NewMetricCollector(refreshRate time.Duration, eventBus *EventBus, collector Collector) *MetricCollector{
+    return &MetricCollector{
+        RefreshRate: refreshRate,
+        EventBus: eventBus,
+        Collector: collector,
+    }
+}
+
 func (mc *MetricCollector) Start(ctx context.Context) error {
     ticker := time.NewTicker(mc.RefreshRate)
 
     defer ticker.Stop()
 
+    logger.GetLogger().Info("Starting metric collector for: ", mc.Collector.GetTopic())
     for {
         select {
             case <-ctx.Done():
