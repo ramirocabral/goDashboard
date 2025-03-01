@@ -12,10 +12,7 @@ import (
     "golang-system-monitor/pkg/stats/uptime"
 )
 
-type StatsManager struct {
-    devices     []string //storage devices
-    interfaces  []string //network interfaces
-}
+type StatsManager struct {}
 
 func NewStatsManager() *StatsManager {
     return &StatsManager{}
@@ -49,9 +46,9 @@ func (sm *StatsManager) GetNetwork() (network.Networks, error) {
     return network.ReadNetworks()
 }
 
-// func (sm *StatsManager) GetSMART() (smart.Smart , error) {
-//     return smart.ReadSmart()
-// }
+func (sm *StatsManager) GetSMART() (smart.Smart , error) {
+    return smart.ReadSmart()
+}
 
 func (sm *StatsManager) GetUptime() (uptime.Uptime, error) {
     return uptime.ReadUptime()

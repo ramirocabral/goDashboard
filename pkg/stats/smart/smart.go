@@ -1,43 +1,66 @@
 package smart
 
-import(
-    "log"
-    "strings"
+import (
+	"log"
+	"strings"
 
-    "golang-system-monitor/internal/utils"
-    "github.com/anatol/smart.go"
+	"golang-system-monitor/internal/utils"
+
+	"github.com/anatol/smart.go"
 )
 
 type Smart struct{
+    Devices     []SmartData     `json:"devices"`
+}
+
+type SmartData struct{
     Device  string              `json:"device"`
     Data    map[string]string   `json:"data"`
 }
 
-func (s *Smart) ToMap() map[string]interface{}{
-    return map[string]interface{}{
-        "device": s.Device,
-        "data": s.Data,
+func ReadSmart() (Smart, error){
+    devices, err := getDevices()
+
+    if err != nil{
+        log.Println("Error getting devices: ", err)
+        return Smart{}, err
     }
+
+    output := Smart{}
+
+    for _, device := range devices{
+        smartData, err := ReadData(device)
+
+        if err != nil{
+            log.Println("Error reading smart data: ", err)
+            continue
+        }
+
+        output.Devices = append(output.Devices, smartData)
+    }
+
+    return output, nil
 }
 
-func ReadSmart(device string) (Smart, error){
+
+func ReadData(device string) (SmartData, error){
 
     dev, err := smart.Open(device)
     if err != nil{
         log.Println("Error opening device: ", err)
-        return Smart{}, err
+        return SmartData{}, err
     }
 
     defer dev.Close()
 
 
-    output := Smart{}
+    output := SmartData{}
 
     smartData, err := utils.ExecuteCommand("smartctl", "-A", device)
 
     if err != nil{
         log.Println("Error reading smart data: ", err)
-        return Smart{}, err
+        return SmartData{}, err
     }
 
     output.Device = device
@@ -93,3 +116,27 @@ func readSataSmart(dataSplit []string) map[string]string{
     return output
 }
 
+func getDevices() ([]string, error){
+    data, err := utils.ExecuteCommand("smartctl" , "--scan")
+
+    if err != nil{
+        log.Println("Error getting disks: ", err)
+        return nil, err
+    }
+
+    dataSplit := strings.Split(string(data), "\n")
+
+    disks := []string{}
+
+    for _, line := range dataSplit{
+        fields := strings.Fields(line)
+
+        if len(fields) < 2{
+            continue
+        }
+
+        disks = append(disks, fields[0])
+    }
+
+    return disks, nil
+}
