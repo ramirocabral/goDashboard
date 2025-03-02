@@ -4,9 +4,6 @@ import (
     "context"
     "time"
 
-    // "github.com/gorilla/mux"
-    "github.com/gorilla/websocket"
-
     "golang-system-monitor/internal/collector"
     "golang-system-monitor/internal/configuration"
     "golang-system-monitor/internal/core"
@@ -16,11 +13,6 @@ import (
     "golang-system-monitor/pkg/stats"
     "golang-system-monitor/api"
 )
-
-var upgrader = websocket.Upgrader{
-    ReadBufferSize: 1024,
-    WriteBufferSize: 1024,
-}
 
 func main(){
     cfg :=  configuration.GetConfig()
@@ -38,8 +30,7 @@ func main(){
     logger.GetLogger().Infof("Connected to database: %s", cfg.DB.Addr)
     defer db.Close()
 
-    statsManager := stats.NewStatsManager()
-    ctx := context.Background()
+
     eb := core.NewEventBus()
 
     cpuTopic := eb.CreateTopic("cpu")
@@ -57,8 +48,12 @@ func main(){
     go dbSubscriber.Subscribe(ioTopic)
     go dbSubscriber.Subscribe(networkTopic)
 
+    ctx := context.Background()
+    statsManager := stats.NewStatsManager()
+
     initCollectors(eb, statsManager, ctx)
-    // log.Fatal(http.ListenAndServe(":8080", nil))
+
+
     app := api.NewApp(cfg, db, eb)
     
     mux := app.Mount()
@@ -66,11 +61,12 @@ func main(){
     err = app.Run(mux)
 
     if err != nil{
-	logger.GetLogger().Fatal("Error starting server: ", err)
+	logger.GetLogger().Fatal("Error running server: ", err)
     }
 }
 
 func initCollectors(eb *core.EventBus, statsManager *stats.StatsManager, ctx context.Context){
+
     logger.GetLogger().Info("Initializing collectors")
     cpuMetricCollector := core.NewMetricCollector(
 	time.Duration(time.Second*1),
@@ -103,7 +99,6 @@ func initCollectors(eb *core.EventBus, statsManager *stats.StatsManager, ctx con
 	collector.NewUptimeCollector(statsManager),
     )
     
-
     go cpuMetricCollector.Start(ctx)
     go memMetricCollector.Start(ctx)
     go ioMetricCollector.Start(ctx)

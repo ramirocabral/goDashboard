@@ -25,24 +25,25 @@ func NewApp(cfg configuration.Config,store storage.Storage, eb *core.EventBus) *
     }
 }
 
-// create the handlers for the mux
+// create the routes
 func (app *app) Mount() http.Handler{
-    r := mux.NewRouter().PathPrefix("/v1").Subrouter()
+    r := mux.NewRouter().PathPrefix("/api/v1").Subrouter()
 
     //set custom middlewares
     r.Use(app.LoggingMiddleware)
     r.Use(app.CORSMiddleware)
 
     ws := r.PathPrefix("/ws").Subrouter()
-    // stats := r.PathPrefix("/stats").Subrouter()
-    // health := r.PathPrefix("/health").Subrouter()
-    // 
+
     ws.HandleFunc("/cpu", app.wsCPUHandler)
     ws.HandleFunc("/memory", app.wsMemoryHandler)
     ws.HandleFunc("/io", app.wsIOHandler)
     ws.HandleFunc("/container", app.wsContainerHandler)
     ws.HandleFunc("/network", app.wsNetworkHandler)
     ws.HandleFunc("/uptime", app.wsUptimeHandler)
+
+    // stats := r.PathPrefix("/stats").Subrouter()
+    // health := r.PathPrefix("/health").Subrouter()
 
     // stats.HandleFunc("/cpu", app.statsCPUHandler)
     // stats.HandleFunc("/memory", app.statsMemoryHandler)
@@ -65,7 +66,6 @@ func (app *app) Run(mux http.Handler) error {
 
     logger.GetLogger().Infof("Starting server on port %s, env %s", app.cfg.APIPort, app.cfg.Env)
 
-    err := srv.ListenAndServe()
 
-    return err
+    return srv.ListenAndServe()
 }
