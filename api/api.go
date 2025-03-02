@@ -39,7 +39,7 @@ func (app *app) Mount() http.Handler{
     // 
     ws.HandleFunc("/cpu", app.wsCPUHandler)
     ws.HandleFunc("/memory", app.wsMemoryHandler)
-    // ws.HandleFunc("/io", app.wsIOHandler)
+    ws.HandleFunc("/io", app.wsIOHandler)
 
     // stats.HandleFunc("/cpu", app.statsCPUHandler)
     // stats.HandleFunc("/memory", app.statsMemoryHandler)

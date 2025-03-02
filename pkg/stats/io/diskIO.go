@@ -1,13 +1,12 @@
 package io
 
-//get write/read per second on disks
 import (
-	"errors"
 	"strings"
 	"time"
 
 	"golang-system-monitor/internal/utils"
 	"golang-system-monitor/internal/core"
+	"golang-system-monitor/internal/logger"
 )
 
 type DiskIO []Disk
@@ -49,46 +48,47 @@ var lastDiskData = map[string]BytesStore{}
 
 //this function is called every 1 second so the stats are actually accurate
 func ReadDiskIO() (DiskIO, error) {
-    diskData, err := utils.ExecuteCommand("iostat", "-d", "-x")
-
-    if err != nil {
-        return nil, errors.New("error reading disk data")
-    }
-    diskDataSplit := strings.Split(string(diskData), "\n")[3:]
-
     var disks DiskIO
 
-    for _, line := range diskDataSplit {
+    data, err := utils.ReadFile("/proc/diskstats")
 
-        fields := strings.Fields(line)
-
-        // if the line is invalid, or the device contains "zram"
-        if len(fields) == 0 || strings.HasPrefix(fields[0], "zram") || strings.HasPrefix(fields[0], "Device") {
-            continue
-        }
-        devName := fields[0]
-        rxBytes := utils.StrToUint64(fields[2])
-        txBytes := utils.StrToUint64(fields[8])
-
-        disk := Disk{}
-
-        disk.Device = devName
-        //get the bytes per second
-        
-        //if it's the first iterarion, we can't calculate the iops
-        if lastDiskData[devName].ReadBytes == 0{
-            disk.ReadPerSecond = 0
-            disk.WritePerSecond = 0
-        }else{
-            disk.ReadPerSecond = (rxBytes - lastDiskData[devName].ReadBytes)
-            disk.WritePerSecond = (txBytes - lastDiskData[devName].WriteBytes)
-        }
-
-        lastDiskData[devName] = BytesStore{ReadBytes: rxBytes, WriteBytes: txBytes}
-
-        disks = append(disks, disk)
+    if err != nil {
+        logger.GetLogger().Error("Error reading disk stats: ", err)
+        return nil, err
     }
 
+    lines := strings.Split(string(data), "\n")
+
+    for _, line := range lines {
+        fields := strings.Fields(line)
+
+        if len(fields) < 14  || fields[1] != "0" || strings.HasPrefix(fields[2],"zram") || strings.HasPrefix(fields[2],"loop") || strings.HasPrefix(fields[2],"ram") {
+            continue
+        }
+
+        devName := fields[2]
+
+        readSectors := utils.StrToUint64(fields[5])
+        writeSectors := utils.StrToUint64(fields[9])
+
+        readKb := readSectors * 512 / 1024
+        writeKb := writeSectors * 512 / 1024
+
+
+        disk := Disk{Device: devName}
+
+        if prev, exists := lastDiskData[devName]; exists {
+            disk.ReadPerSecond = readKb - prev.ReadBytes
+            disk.WritePerSecond = writeKb - prev.WriteBytes
+        }else{
+            disk.ReadPerSecond = 0
+            disk.WritePerSecond = 0
+        }
+
+        lastDiskData[devName] = BytesStore{ReadBytes: readKb, WriteBytes: writeKb}
+
+        disks = append(disks, disk)
+
+    }
     return disks, nil
 }
-
