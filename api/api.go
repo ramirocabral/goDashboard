@@ -27,18 +27,7 @@ func NewApp(cfg configuration.Config,store storage.Storage, eb *core.EventBus) *
 
 // create the handlers for the mux
 func (app *app) Mount() http.Handler{
-    // r := mux.NewRouter()
-    //
-    // //set custom middlewares
-    // r.Use(app.LoggingMiddleware)
-    // r.Use(app.CORSMiddleware)
-    //
-    // r.HandleFunc("/ws/cpu", app.wsCPUHandler)
-    // r.HandleFunc("/ws/memory", app.wsMemoryHandler)
-    // r.HandleFunc("/ws/io", app.wsIOHandler)
-    // i want to have "subrouters" for each fo the paths, i will hav /ws, /stats and /health
-
-    r := mux.NewRouter()
+    r := mux.NewRouter().PathPrefix("/v1").Subrouter()
 
     //set custom middlewares
     r.Use(app.LoggingMiddleware)
