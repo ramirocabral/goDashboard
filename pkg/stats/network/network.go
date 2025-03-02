@@ -80,7 +80,7 @@ func ReadNetworks() (Networks, error){
         usage := NetworkUsage{}
 
         //if it's the first iteration, we can't calculate the bytes per second
-        if lastNetworkData[net.Interface].RxBytes == 0{
+        if _, ok := lastNetworkData[net.Interface]; !ok{
             usage.RxBytesPS = 0
             usage.TxBytesPS = 0
         } else{
@@ -90,6 +90,9 @@ func ReadNetworks() (Networks, error){
         }
 
         net.Usage = usage
+
+        //update the last network data
+        lastNetworkData[net.Interface] = bytes
 
         //add the actual network to the slice
         output = append(output, net)
@@ -108,7 +111,7 @@ func getNetworkBytes(interfaceName string) ByteStore{
         log.Println(err)
     }
 
-    dataSplit := strings.Split(string(data), " ")
+    dataSplit := strings.Fields(string(data))
     output.RxBytes = utils.StrToUint64(dataSplit[1])
     output.TxBytes = utils.StrToUint64(dataSplit[2])
 

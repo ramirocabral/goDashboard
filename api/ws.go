@@ -51,4 +51,41 @@ func (a *app) wsIOHandler(w http.ResponseWriter, r *http.Request){
 	go ws.Subscribe(a.eb.Topics["io"])
 }
 
-// func (a *app) wsContainerHandler(w http.ResponseWriter, r *http.Request){
+func (a *app) wsContainerHandler(w http.ResponseWriter, r *http.Request){
+    conn, err := upgrader.Upgrade(w, r, nil)
+
+	if err != nil{
+	logger.GetLogger().Errorf("Error upgrading connection: %s", err)
+	return 
+	}
+
+	ws := subscribers.NewWebSocketSubscriber(conn)
+
+	go ws.Subscribe(a.eb.Topics["container"])
+}
+
+func (a *app) wsNetworkHandler(w http.ResponseWriter, r *http.Request){
+    conn, err := upgrader.Upgrade(w, r, nil)
+
+	if err != nil{
+	    logger.GetLogger().Errorf("Error upgrading connection: %s", err)
+	return 
+	}
+
+	ws := subscribers.NewWebSocketSubscriber(conn)
+
+	go ws.Subscribe(a.eb.Topics["network"])
+}
+
+func (a *app) wsUptimeHandler(w http.ResponseWriter, r *http.Request){
+    conn, err := upgrader.Upgrade(w, r, nil)
+
+	if err != nil{
+	    logger.GetLogger().Errorf("Error upgrading connection: %s", err)
+	return 
+	}
+
+	ws := subscribers.NewWebSocketSubscriber(conn)
+
+	go ws.Subscribe(a.eb.Topics["uptime"])
+}

@@ -45,13 +45,17 @@ func main(){
     cpuTopic := eb.CreateTopic("cpu")
     memTopic := eb.CreateTopic("memory")
     ioTopic := eb.CreateTopic("io")
-    // containerTopic := eb.CreateTopic("container")
-    // _ = containerTopic
+    containerTopic := eb.CreateTopic("container")
+    networkTopic := eb.CreateTopic("network")
+    uptimeTopic := eb.CreateTopic("uptime")
+    _ = containerTopic
+    _ = uptimeTopic
 
     dbSubscriber := subscribers.NewStorageSubscriber(db)
     go dbSubscriber.Subscribe(cpuTopic)
     go dbSubscriber.Subscribe(memTopic)
     go dbSubscriber.Subscribe(ioTopic)
+    go dbSubscriber.Subscribe(networkTopic)
 
     initCollectors(eb, statsManager, ctx)
     // log.Fatal(http.ListenAndServe(":8080", nil))
@@ -73,27 +77,37 @@ func initCollectors(eb *core.EventBus, statsManager *stats.StatsManager, ctx con
 	eb,
 	collector.NewCPUCollector(statsManager),
     )
-
     memMetricCollector := core.NewMetricCollector(
 	time.Duration(time.Second*2),
 	eb,
 	collector.NewMemoryCollector(statsManager),
     )
-
     ioMetricCollector := core.NewMetricCollector(
 	time.Duration(time.Second*1),
 	eb,
 	collector.NewIOCollector(statsManager),
     )
-	//
- //    containerMetricCollector := core.NewMetricCollector(
-	// time.Duration(time.Second*1),
-	// eb,
-	// collector.NewContainerCollector(statsManager),
- //    )
+    containerMetricCollector := core.NewMetricCollector(
+	time.Duration(time.Second*5),
+	eb,
+	collector.NewContainerCollector(statsManager),
+    )
+    networkMetricCollector := core.NewMetricCollector(
+	time.Duration(time.Second*1),
+	eb,
+	collector.NewNetworkCollector(statsManager),
+    )
+    uptimeMetricCollector := core.NewMetricCollector(
+	time.Duration(time.Second*2),
+	eb,
+	collector.NewUptimeCollector(statsManager),
+    )
+    
 
     go cpuMetricCollector.Start(ctx)
     go memMetricCollector.Start(ctx)
     go ioMetricCollector.Start(ctx)
-    // go containerMetricCollector.Start(ctx)
+    go containerMetricCollector.Start(ctx)
+    go networkMetricCollector.Start(ctx)
+    go uptimeMetricCollector.Start(ctx)
 }

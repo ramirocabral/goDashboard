@@ -14,7 +14,7 @@ type Uptime struct{
     Uptime uint64   `json:"uptime"`
 }
 
-func (u *Uptime) ToPoint() []*core.Point{
+func (u Uptime) ToPoint() []*core.Point{
 	return []*core.Point{{
 		Timestamp: time.Now(),
 		Measurement: "uptime",
@@ -28,7 +28,6 @@ func (u *Uptime) ToPoint() []*core.Point{
 
 const UPTIME_PATH = "/proc/uptime"
 
-// ReadUptime function
 func ReadUptime() (Uptime, error){
     output := Uptime{}
 
@@ -40,7 +39,7 @@ func ReadUptime() (Uptime, error){
 
     uptimeDataSplit := strings.Fields(string(uptimeData))
 
-    output.Uptime = utils.StrToUint64(uptimeDataSplit[0])
+    output.Uptime = uint64(utils.RoundFloat(utils.StrToFloat64(uptimeDataSplit[0]),0))
 
     return output, nil
 }

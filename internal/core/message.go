@@ -26,8 +26,8 @@ type Storable interface{
 }
 
 type Message struct{
-    Type            string
-    Data            Storable
+    Type            string      `json:"type"`
+    Data            Storable    `json:"data"`
 }
 
 // a topic representes a type of message that can be published to the event bus, and eventually dispatched to all of its subscribers
