@@ -1,14 +1,14 @@
 package api
 
 import (
+	"net/http"
+	"time"
+	"github.com/gorilla/mux"
+
 	"golang-system-monitor/internal/configuration"
 	"golang-system-monitor/internal/core"
 	"golang-system-monitor/internal/logger"
 	"golang-system-monitor/internal/storage"
-	"net/http"
-	"time"
-
-	"github.com/gorilla/mux"
 )
 
 type app struct{
@@ -27,15 +27,37 @@ func NewApp(cfg configuration.Config,store storage.Storage, eb *core.EventBus) *
 
 // create the handlers for the mux
 func (app *app) Mount() http.Handler{
+    // r := mux.NewRouter()
+    //
+    // //set custom middlewares
+    // r.Use(app.LoggingMiddleware)
+    // r.Use(app.CORSMiddleware)
+    //
+    // r.HandleFunc("/ws/cpu", app.wsCPUHandler)
+    // r.HandleFunc("/ws/memory", app.wsMemoryHandler)
+    // r.HandleFunc("/ws/io", app.wsIOHandler)
+    // i want to have "subrouters" for each fo the paths, i will hav /ws, /stats and /health
+
     r := mux.NewRouter()
 
     //set custom middlewares
     r.Use(app.LoggingMiddleware)
     r.Use(app.CORSMiddleware)
 
-    r.HandleFunc("/ws/cpu", app.wsCPUHandler)
+    ws := r.PathPrefix("/ws").Subrouter()
+    // stats := r.PathPrefix("/stats").Subrouter()
+    // health := r.PathPrefix("/health").Subrouter()
+    // 
+    ws.HandleFunc("/cpu", app.wsCPUHandler)
+    ws.HandleFunc("/memory", app.wsMemoryHandler)
+    // ws.HandleFunc("/io", app.wsIOHandler)
 
-    //add the routes
+    // stats.HandleFunc("/cpu", app.statsCPUHandler)
+    // stats.HandleFunc("/memory", app.statsMemoryHandler)
+    // stats.HandleFunc("/io", app.statsIOHandler)
+
+    // health.HandleFunc("/cpu", app.healthCPUHandler)
+
     return r
 }
 

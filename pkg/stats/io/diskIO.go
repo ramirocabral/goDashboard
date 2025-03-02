@@ -50,11 +50,11 @@ var lastDiskData = map[string]BytesStore{}
 //this function is called every 1 second so the stats are actually accurate
 func ReadDiskIO() (DiskIO, error) {
     diskData, err := utils.ExecuteCommand("iostat", "-d", "-x")
-    diskDataSplit := strings.Split(string(diskData), "\n")[3:]
 
     if err != nil {
         return nil, errors.New("error reading disk data")
     }
+    diskDataSplit := strings.Split(string(diskData), "\n")[3:]
 
     var disks DiskIO
 

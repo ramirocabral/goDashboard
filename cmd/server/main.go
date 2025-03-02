@@ -44,14 +44,14 @@ func main(){
 
     cpuTopic := eb.CreateTopic("cpu")
     memTopic := eb.CreateTopic("memory")
-    ioTopic := eb.CreateTopic("io")
+    // ioTopic := eb.CreateTopic("io")
     // containerTopic := eb.CreateTopic("container")
     // _ = containerTopic
 
     dbSubscriber := subscribers.NewStorageSubscriber(db)
     go dbSubscriber.Subscribe(cpuTopic)
     go dbSubscriber.Subscribe(memTopic)
-    go dbSubscriber.Subscribe(ioTopic)
+    // go dbSubscriber.Subscribe(ioTopic)
 
     initCollectors(eb, statsManager, ctx)
     // log.Fatal(http.ListenAndServe(":8080", nil))
@@ -79,12 +79,12 @@ func initCollectors(eb *core.EventBus, statsManager *stats.StatsManager, ctx con
 	eb,
 	collector.NewMemoryCollector(statsManager),
     )
-
-    ioMetricCollector := core.NewMetricCollector(
-	time.Duration(time.Second*1),
-	eb,
-	collector.NewIOCollector(statsManager),
-    )
+	//
+ //    ioMetricCollector := core.NewMetricCollector(
+	// time.Duration(time.Second*1),
+	// eb,
+	// collector.NewIOCollector(statsManager),
+ //    )
 	//
  //    containerMetricCollector := core.NewMetricCollector(
 	// time.Duration(time.Second*1),
@@ -94,6 +94,6 @@ func initCollectors(eb *core.EventBus, statsManager *stats.StatsManager, ctx con
 
     go cpuMetricCollector.Start(ctx)
     go memMetricCollector.Start(ctx)
-    go ioMetricCollector.Start(ctx)
+    // go ioMetricCollector.Start(ctx)
     // go containerMetricCollector.Start(ctx)
 }
