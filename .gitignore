@@ -28,3 +28,4 @@ go.work.sum
 #ignore the /influxdb2 directory
 
 /influxdb2
+/target
