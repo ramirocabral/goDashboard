@@ -2,8 +2,6 @@ package main
 
 import (
     "context"
-    "log"
-    "net/http"
     "time"
 
     // "github.com/gorilla/mux"
@@ -16,6 +14,7 @@ import (
     "golang-system-monitor/internal/logger"
     "golang-system-monitor/internal/subscribers"
     "golang-system-monitor/pkg/stats"
+    "golang-system-monitor/api"
 )
 
 var upgrader = websocket.Upgrader{
@@ -46,8 +45,8 @@ func main(){
     cpuTopic := eb.CreateTopic("cpu")
     memTopic := eb.CreateTopic("memory")
     ioTopic := eb.CreateTopic("io")
-    containerTopic := eb.CreateTopic("container")
-    _ = containerTopic
+    // containerTopic := eb.CreateTopic("container")
+    // _ = containerTopic
 
     dbSubscriber := subscribers.NewStorageSubscriber(db)
     go dbSubscriber.Subscribe(cpuTopic)
@@ -55,24 +54,16 @@ func main(){
     go dbSubscriber.Subscribe(ioTopic)
 
     initCollectors(eb, statsManager, ctx)
-    //
-    //
-    // http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request){
-    //     conn, err := upgrader.Upgrade(w, r, nil)
-    //     if err != nil{
-    //         log.Fatal("Error upgrading connection: ", err)
-    //         return
-    //     }
-    //
-    //     ws := subscribers.NewWebSocketSubscriber(conn)
-    //
-    //     go ws.Subscribe(cpuTopic)
-    //
-    //
-    //     defer ws.Unsubscribe(cpuTopic)
-    // })
-    //
-    log.Fatal(http.ListenAndServe(":8080", nil))
+    // log.Fatal(http.ListenAndServe(":8080", nil))
+    app := api.NewApp(cfg, db, eb)
+    
+    mux := app.Mount()
+
+    err = app.Run(mux)
+
+    if err != nil{
+	logger.GetLogger().Fatal("Error starting server: ", err)
+    }
 }
 
 func initCollectors(eb *core.EventBus, statsManager *stats.StatsManager, ctx context.Context){
@@ -94,15 +85,15 @@ func initCollectors(eb *core.EventBus, statsManager *stats.StatsManager, ctx con
 	eb,
 	collector.NewIOCollector(statsManager),
     )
-
-    containerMetricCollector := core.NewMetricCollector(
-	time.Duration(time.Second*1),
-	eb,
-	collector.NewContainerCollector(statsManager),
-    )
+	//
+ //    containerMetricCollector := core.NewMetricCollector(
+	// time.Duration(time.Second*1),
+	// eb,
+	// collector.NewContainerCollector(statsManager),
+ //    )
 
     go cpuMetricCollector.Start(ctx)
     go memMetricCollector.Start(ctx)
     go ioMetricCollector.Start(ctx)
-    go containerMetricCollector.Start(ctx)
+    // go containerMetricCollector.Start(ctx)
 }

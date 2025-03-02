@@ -66,8 +66,10 @@ func NewEventBus() *EventBus{
 // dispatches every message received to all of its Subscribers
 func (t *Topic) dispatch(){
     for msg := range t.Messages{
+        logger.GetLogger().Debugf("Dispatching message to topic: %s", t.Name)
         t.Mu.RLock()
         for _, sub := range t.Subscribers{
+            logger.GetLogger().Debugf("Dispatching message to subscriber: %s", sub.ID())
             go sub.Handle(msg)
         }
         t.Mu.RUnlock()

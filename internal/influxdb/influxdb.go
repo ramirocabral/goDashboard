@@ -23,12 +23,22 @@ func New(addr, token, org, bucket string) (storage.Storage, error) {
     client := influxdb2.NewClient(addr, token)
     writeAPI := client.WriteAPI(org,bucket)
     queryAPI := client.QueryAPI(org)
-    return &InfluxStore{
+
+    influx := &InfluxStore{
         client: client,
         writeAPI: writeAPI,
         queryAPI: queryAPI,
 	bucket: bucket,
-    }, nil
+    }
+
+    alive, err := client.Ping(context.Background())
+    _ = alive
+
+    if err != nil {
+	return nil, err
+    }
+
+    return influx, nil
 }
 
 func (s *InfluxStore) Close(){

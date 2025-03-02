@@ -1,11 +1,10 @@
 package subscribers
 
 import (
-	"log"
 	"sync"
 
 	"golang-system-monitor/internal/core"
-
+	"golang-system-monitor/internal/logger"
 	"github.com/gorilla/websocket"
 )
 
@@ -21,6 +20,7 @@ func NewWebSocketSubscriber(conn *websocket.Conn) *WebSocketSubscriber{
         Id: conn.RemoteAddr().String(),
         Conn: conn,
         Topics: make(map[string]*core.Topic),
+        Mu: &sync.RWMutex{},
     }
 }
 
@@ -31,15 +31,16 @@ func (ws *WebSocketSubscriber) ID() string{
 // handle function, executes when a message is received
 func (ws *WebSocketSubscriber) Handle(msg *core.Message){
     ws.Mu.Lock()
-    defer ws.Mu.Unlock()
 
     if _, ok := ws.Topics[msg.Type]; !ok{
+        ws.Mu.Unlock()
         return
     }
 
     err := ws.Conn.WriteJSON(msg)
+    ws.Mu.Unlock()
     if err != nil{
-        log.Println("Error writing to websocket: ", err)
+        logger.GetLogger().Errorf("Error writing to websocket: %s", err)
         ws.HandleDisconnect()
     }
 }
@@ -83,9 +84,11 @@ func (ws *WebSocketSubscriber) Unsubscribe(topic *core.Topic) error{
 // close the connection and unsubscribe from all topics
 func (ws *WebSocketSubscriber) HandleDisconnect(){
     ws.Mu.Lock()
-    defer ws.Mu.Unlock()
+    topics := ws.Topics
+    ws.Mu.Unlock()
 
-    for _, topic := range ws.Topics{
+    logger.GetLogger().Debugf("Disconnecting websocket: %s", ws.Id)
+    for _, topic := range topics{
         ws.Unsubscribe(topic)
     }
 
