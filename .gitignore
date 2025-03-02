@@ -29,3 +29,4 @@ go.work.sum
 
 /influxdb2
 /target
+/tmp
