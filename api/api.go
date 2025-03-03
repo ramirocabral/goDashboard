@@ -50,12 +50,15 @@ func (app *app) Mount() http.Handler{
     stats.HandleFunc("/smart", app.smartHandler)
     stats.HandleFunc("/host", app.hostHandler)
     stats.HandleFunc("/disk", app.diskHandler)
-    // stats.HandleFunc("/cpu", app.statsCPUHandler)
-    // stats.HandleFunc("/memory", app.statsMemoryHandler)
-    // stats.HandleFunc("/io", app.statsIOHandler)
 
-    // health := r.PathPrefix("/health").Subrouter()
-    // health.HandleFunc("/cpu", app.healthCPUHandler)
+    history := r.PathPrefix("/history").Subrouter()
+
+    history.Use(app.ValidateTimeMiddleware)
+
+    history.HandleFunc("/cpu", app.cpuHistoryHandler)
+    history.HandleFunc("/memory", app.memoryHistoryHandler)
+    history.HandleFunc("/io", app.ioHistoryHandler)
+    history.HandleFunc("/network", app.networkHistoryHandler)
 
     return r
 }
