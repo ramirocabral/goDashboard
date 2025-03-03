@@ -16,12 +16,16 @@ type WebSocketSubscriber struct{
 }
 
 func NewWebSocketSubscriber(conn *websocket.Conn) *WebSocketSubscriber{
-    return &WebSocketSubscriber{
+    ws :=  &WebSocketSubscriber{
         Id: conn.RemoteAddr().String(),
         Conn: conn,
         Topics: make(map[string]*core.Topic),
         Mu: &sync.RWMutex{},
     }
+
+    go ws.listenForClose()
+
+    return ws
 }
 
 func (ws *WebSocketSubscriber) ID() string{
@@ -93,4 +97,16 @@ func (ws *WebSocketSubscriber) HandleDisconnect(){
     }
 
     ws.Conn.Close()
+}
+
+
+func (ws *WebSocketSubscriber) listenForClose() {
+    for {
+        _, _, err := ws.Conn.ReadMessage()
+        if err != nil {
+            logger.GetLogger().Infof("Client %s disconnected", ws.Id)
+            ws.HandleDisconnect()
+            return
+        }
+    }
 }

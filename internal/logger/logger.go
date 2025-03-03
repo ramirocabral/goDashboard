@@ -13,7 +13,7 @@ func Init(level string){
 
     var cfg zap.Config
 
-    if level == "debug"{
+    if level == "dev"{
         cfg = zap.NewDevelopmentConfig()
     } else {
         cfg = zap.NewProductionConfig()
