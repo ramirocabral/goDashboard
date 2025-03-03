@@ -9,9 +9,9 @@ import (
 type Storage interface{
     ID() string
     WriteStats(points []*core.Point)
-    ReadCpuStats(startTime, endTime time.Time) (CPUResponse, error)
-    ReadIOStats(startTime, endTime time.Time) (IOResponse, error)
-    ReadMemoryStats(startTime, endTime time.Time) (MemoryResponse, error)
-    ReadNetworkStats(startTime, endTime time.Time) (NetworkResponse, error)
+    ReadCpuStats(startTime, endTime time.Time, interval string) (CPUResponse, error)
+    ReadIOStats(startTime, endTime time.Time, interval string) (IOResponse, error)
+    ReadMemoryStats(startTime, endTime time.Time, interval string) (MemoryResponse, error)
+    ReadNetworkStats(startTime, endTime time.Time, interval string) (NetworkResponse, error)
     Close()
 }
