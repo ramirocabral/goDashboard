@@ -23,3 +23,7 @@ func StrToFloat64(s string) float64{
 
     return value
 }
+
+func Uint64ToStr(i uint64) string{
+    return strconv.FormatUint(i, 10)
+}

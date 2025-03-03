@@ -30,6 +30,8 @@ func (c CPU) ToPoint() []*core.Point{
         Measurement: "cpu",
         Tags: map[string]string{
             "model_name": c.ModelName,
+            "cores": utils.Uint64ToStr(c.Cores),
+            "threads": utils.Uint64ToStr(c.Threads),
         },
         Fields: map[string]interface{}{
             "temp" : c.Temp,
@@ -37,17 +39,6 @@ func (c CPU) ToPoint() []*core.Point{
             "idle_percentage": c.UsageStatistics.IdlePercentage,
         },
     } ,
-    }
-}
-
-func (c CPU) ToMap() map[string]interface{}{
-    return map[string]interface{}{
-        "model_name": c.ModelName,
-        "cores": c.Cores,
-        "threads": c.Threads,
-        "temp": c.Temp,
-        "usage_percentage": c.UsageStatistics.UsagePercentage,
-        "idle_percentage": c.UsageStatistics.IdlePercentage,
     }
 }
 

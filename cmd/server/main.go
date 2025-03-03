@@ -16,6 +16,7 @@ import (
 
 func main(){
     cfg :=  configuration.GetConfig()
+    logger.Init("prod")
 
     //database
     db, err := influxdb.New(
@@ -54,7 +55,7 @@ func main(){
     initCollectors(eb, statsManager, ctx)
 
 
-    app := api.NewApp(cfg, db, eb)
+    app := api.NewApp(cfg, db, eb, statsManager)
     
     mux := app.Mount()
 
