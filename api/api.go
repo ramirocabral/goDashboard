@@ -9,19 +9,22 @@ import (
 	"golang-system-monitor/internal/core"
 	"golang-system-monitor/internal/logger"
 	"golang-system-monitor/internal/storage"
+	"golang-system-monitor/pkg/stats"
 )
 
 type app struct{
-    cfg	    configuration.Config
-    store   storage.Storage
-    eb      *core.EventBus
+    cfg		configuration.Config
+    store	storage.Storage
+    eb		*core.EventBus
+    statsManager *stats.StatsManager
 }
 
-func NewApp(cfg configuration.Config,store storage.Storage, eb *core.EventBus) *app{
+func NewApp(cfg configuration.Config,store storage.Storage, eb *core.EventBus, statsManager *stats.StatsManager) *app{
     return &app{
 	cfg: cfg,
 	store: store,
 	eb: eb,
+	statsManager: statsManager,
     }
 }
 
@@ -42,13 +45,16 @@ func (app *app) Mount() http.Handler{
     ws.HandleFunc("/network", app.wsNetworkHandler)
     ws.HandleFunc("/uptime", app.wsUptimeHandler)
 
-    // stats := r.PathPrefix("/stats").Subrouter()
-    // health := r.PathPrefix("/health").Subrouter()
+    stats := r.PathPrefix("/stat").Subrouter()
 
+    stats.HandleFunc("/smart", app.smartHandler)
+    stats.HandleFunc("/host", app.hostHandler)
+    stats.HandleFunc("/disk", app.diskHandler)
     // stats.HandleFunc("/cpu", app.statsCPUHandler)
     // stats.HandleFunc("/memory", app.statsMemoryHandler)
     // stats.HandleFunc("/io", app.statsIOHandler)
 
+    // health := r.PathPrefix("/health").Subrouter()
     // health.HandleFunc("/cpu", app.healthCPUHandler)
 
     return r

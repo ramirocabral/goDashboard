@@ -7,7 +7,9 @@ import (
     "golang-system-monitor/internal/utils"
 )
 
-type Disks []Disk
+type Disks struct{
+    Disks []Disk `json:"disks"`
+}
 
 type Disk struct {
     Device          string      `json:"device"`
@@ -24,7 +26,7 @@ func ReadDisks() (Disks, error) {
     diskDataSplit := strings.Split(string(diskData), "\n")[1:]
 
     if err != nil {
-        return nil, errors.New("error reading disk data")
+        return Disks{}, errors.New("error reading disk data")
     }
 
     var disks Disks
@@ -46,7 +48,7 @@ func ReadDisks() (Disks, error) {
             MountPt:     fields[6],
         }
 
-        disks = append(disks, disk)
+        disks.Disks = append(disks.Disks, disk)
     }
 
     return disks, nil

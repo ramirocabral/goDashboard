@@ -23,7 +23,6 @@ func ReadSmart() (Smart, error){
     devices, err := getDevices()
 
     if err != nil{
-        log.Println("Error getting devices: ", err)
         return Smart{}, err
     }
 
@@ -33,8 +32,7 @@ func ReadSmart() (Smart, error){
         smartData, err := ReadData(device)
 
         if err != nil{
-            log.Println("Error reading smart data: ", err)
-            continue
+            return Smart{}, err
         }
 
         output.Devices = append(output.Devices, smartData)
