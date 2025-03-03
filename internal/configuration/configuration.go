@@ -31,7 +31,7 @@ func GetConfig() Config {
 			Org:    GetString("DB_ORG", "my-org"),
 			Bucket: GetString("DB_BUCKET", "my-bucket"),
 		},
-		Env: GetString("ENV", "development"),
+		Env: GetString("ENV", "dev"),
 	}
 }
 

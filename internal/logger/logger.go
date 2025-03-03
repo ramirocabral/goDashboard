@@ -6,14 +6,30 @@ import (
 
 var log *zap.SugaredLogger
 
-func Init(){
-    l, _ := zap.NewDevelopment()
-    log = l.Sugar()
+func Init(level string){
+    if log != nil{
+        return
+    }
+
+    var cfg zap.Config
+
+    if level == "debug"{
+        cfg = zap.NewDevelopmentConfig()
+    } else {
+        cfg = zap.NewProductionConfig()
+    }
+    logger, err := cfg.Build()
+
+    if err != nil{
+        panic(err)
+    }
+
+    log = logger.Sugar()
 }
 
 func GetLogger() *zap.SugaredLogger{
     if log == nil{
-        Init()
+        Init("debug")
     }
 
     return log
