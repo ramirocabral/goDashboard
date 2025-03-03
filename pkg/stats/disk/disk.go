@@ -10,13 +10,13 @@ import (
 type Disks []Disk
 
 type Disk struct {
-    Device          string
-    Type            string
-    MountPt         string  
-    Size            uint64
-    Used            uint64
-    Free            uint64  
-    UsedPercentage  uint64
+    Device          string      `json:"device"`
+    Type            string      `json:"type"`
+    MountPt         string      `json:"mount_point"`
+    UsedPercentage  uint64      `json:"used_percentage"`
+    GBSize          uint64      `json:"gb_size"`
+    GBUsed          uint64      `json:"gb_used"`
+    GBFree          uint64      `json:"gb_free"`
 }    
 
 func ReadDisks() (Disks, error) {
@@ -39,10 +39,10 @@ func ReadDisks() (Disks, error) {
         disk := Disk{
             Device:      fields[0],
             Type:        fields[1],
-            Size:       utils.StrToUint64(strings.TrimSuffix(fields[2], "G")),
-            Used:        utils.StrToUint64(strings.TrimSuffix(fields[3], "G")),
-            Free:        utils.StrToUint64(strings.TrimSuffix(fields[4], "G")),
             UsedPercentage: utils.StrToUint64(strings.TrimSuffix(fields[5], "%")),
+            GBSize:       utils.StrToUint64(strings.TrimSuffix(fields[2], "G")),
+            GBUsed:        utils.StrToUint64(strings.TrimSuffix(fields[3], "G")),
+            GBFree:        utils.StrToUint64(strings.TrimSuffix(fields[4], "G")),
             MountPt:     fields[6],
         }
 

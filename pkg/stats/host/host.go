@@ -10,10 +10,10 @@ import (
 )
 
 type Host struct{
-    Hostname string
-    Os string
-    Kernel string
-    Date string
+    Hostname    string  `json:"hostname"`
+    Os          string  `json:"os"`
+    Kernel      string  `json:"kernel"`
+    Date        string  `json:"date"`
 }
 
 const HOSTNAME_PATH = "/proc/sys/kernel/hostname"
