@@ -1,7 +1,9 @@
 package smart
 
 import (
+	// "fmt"
 	"log"
+	"regexp"
 	"strings"
 
 	"golang-system-monitor/internal/utils"
@@ -115,8 +117,9 @@ func readSataSmart(dataSplit []string) map[string]string{
     return output
 }
 
+//returna a slice with the devices to get smart data from
 func getDevices() ([]string, error){
-    data, err := utils.ExecuteCommand("smartctl" , "--scan")
+    data, err := utils.ExecuteCommand("lsblk", "-d", "-o", "NAME", "-n", "-l")
 
     if err != nil{
         log.Println("Error getting disks: ", err)
@@ -128,13 +131,19 @@ func getDevices() ([]string, error){
     disks := []string{}
 
     for _, line := range dataSplit{
-        fields := strings.Fields(line)
 
-        if len(fields) < 2{
+        if line == "" || strings.HasPrefix(line, "loop") || strings.HasPrefix(line, "sr") || strings.HasPrefix(line, "ram") || strings.HasPrefix(line, "zram"){
             continue
         }
 
-        disks = append(disks, fields[0])
+        if strings.HasPrefix(line, "nvme"){
+            re := regexp.MustCompile(`n\d+`)
+            line = re.ReplaceAllString(line, "")
+        }
+
+        // fmt.Println(line)
+
+        disks = append(disks, "/dev/" + line)
     }
 
     return disks, nil

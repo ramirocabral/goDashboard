@@ -12,7 +12,6 @@ type Networks []Network
 
 type Network struct {
     Interface       string        `json:"interface"`
-    Ip              string        `json:"ip"`
     Usage           NetworkUsage  `json:"usage"`
 }
 
@@ -34,7 +33,6 @@ func (n Networks) ToPoint() []*core.Point{
             Measurement: "network",
             Tags: map[string]string{
                 "interface": network.Interface,
-                "ip": network.Ip,
             },
             Fields: map[string]interface{}{
                 "rx_bytes_ps": network.Usage.RxBytesPS,
@@ -72,7 +70,6 @@ func ReadNetworks() (Networks, error){
         //get the interface name an ip addr
         ifaceSplit := strings.Split(iface, " : ")
         net.Interface = ifaceSplit[0]
-        net.Ip = ifaceSplit[1]
 
         //get the rw bytes per second
         bytes := getNetworkBytes(net.Interface)

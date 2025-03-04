@@ -22,7 +22,7 @@ type Disk struct {
 }    
 
 func ReadDisks() (Disks, error) {
-    diskData, err := utils.ExecuteCommand("df","-T","-BG","--exclude-type=tmpfs","--exclude-type=devtmpfs","--exclude-type=cifs","--exclude-type=efivarfs")
+    diskData, err := utils.ExecuteCommand("df","-T","-BG","--exclude-type=tmpfs","--exclude-type=devtmpfs","--exclude-type=cifs","--exclude-type=efivarfs","--exclude-type=overlay")
     diskDataSplit := strings.Split(string(diskData), "\n")[1:]
 
     if err != nil {

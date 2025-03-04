@@ -266,7 +266,6 @@ func parseNetworkStats(result *api.QueryTableResult) storage.NetworkResponse{
 		record := result.Record()
 		timestamp := record.Time()
 		interfaceName := record.ValueByKey("interface").(string)
-		ip := record.ValueByKey("ip").(string)
 		rxBytesPS := uint64(record.ValueByKey("rx_bytes_ps").(float64))
 		txBytesPS := uint64(record.ValueByKey("tx_bytes_ps").(float64))
 
@@ -276,12 +275,11 @@ func parseNetworkStats(result *api.QueryTableResult) storage.NetworkResponse{
 			TxBytesPS: txBytesPS,
 		}
 
-		key := interfaceName + ":" + ip
+		key := interfaceName
 
 		if _, exists := interfaceMap[key]; !exists {
 			interfaceMap[key] = &storage.NetworkStats{
 				Interface: interfaceName,
-				Ip:        ip,
 				Data:      []storage.NetworkPoint{},
 			}
 		}
