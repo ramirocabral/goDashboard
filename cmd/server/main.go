@@ -20,7 +20,7 @@ func main(){
 
     //database
     db, err := influxdb.New(
-	cfg.DB.Addr,
+	"http://influxdb2:8086",
 	cfg.DB.Token,
 	cfg.DB.Org,
 	cfg.DB.Bucket,

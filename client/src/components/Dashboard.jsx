@@ -1,0 +1,104 @@
+"use client"
+
+import { useState } from "react"
+import CpuCard from "./cards/CpuCard"
+import MemoryCard from "./cards/MemoryCard"
+import StorageCard from "./cards/StorageCard"
+import NetworkCard from "./cards/NetworkCard"
+import ContainerList from "./ContainerList"
+import SystemInfo from "./SystemInfo"
+import HostInfo from "./HostInfo"
+import DisksInfo from "./DisksInfo"
+import SmartData from "./SmartData"
+import { useWebSocket } from "../contexts/WebSocketContext"
+
+const Dashboard = ({ darkMode, setDarkMode }) => {
+  const { connected } = useWebSocket()
+  const [splitView, setSplitView] = useState(false)
+  const [showAllCores, setShowAllCores] = useState(false)
+
+  // Calculate overall connection status
+  const isConnected = Object.values(connected).some((status) => status)
+
+  return (
+    <div className="container mx-auto p-4">
+      <header className="flex justify-between items-center mb-6">
+        <div className="flex items-center">
+          <h1 className="text-3xl font-bold">dash.</h1>
+          <div className={`ml-4 flex items-center ${isConnected ? "text-green-500" : "text-red-500"}`}>
+            <div className={`h-2 w-2 rounded-full ${isConnected ? "bg-green-500 animate-pulse" : "bg-red-500"}`} />
+            <span className="ml-2 text-sm">{isConnected ? "Connected" : "Disconnected"}</span>
+          </div>
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="flex items-center">
+            <span className="mr-2 text-sm">Dark Mode</span>
+            <label className="switch">
+              <input
+                type="checkbox"
+                className="switch-input"
+                checked={darkMode}
+                onChange={() => setDarkMode(!darkMode)}
+              />
+              <span className="switch-slider"></span>
+            </label>
+          </div>
+          <div className="flex items-center">
+            <span className="mr-2 text-sm">Show All Cores</span>
+            <label className="switch">
+              <input
+                type="checkbox"
+                className="switch-input"
+                checked={showAllCores}
+                onChange={() => setShowAllCores(!showAllCores)}
+              />
+              <span className="switch-slider"></span>
+            </label>
+          </div>
+          <div className="flex items-center">
+            <span className="mr-2 text-sm">Split View</span>
+            <label className="switch">
+              <input
+                type="checkbox"
+                className="switch-input"
+                checked={splitView}
+                onChange={() => setSplitView(!splitView)}
+              />
+              <span className="switch-slider"></span>
+            </label>
+          </div>
+        </div>
+      </header>
+
+      <div className="mb-6">
+        <HostInfo />
+      </div>
+
+      <div className="mb-6">
+        <SystemInfo />
+      </div>
+
+      <div className="grid-container mb-6">
+        <CpuCard showAllCores={showAllCores} />
+        <MemoryCard />
+        <StorageCard />
+        <NetworkCard splitView={splitView} />
+      </div>
+
+      <div className="mb-6">
+        <DisksInfo />
+      </div>
+
+      <div className="mb-6">
+        <SmartData />
+      </div>
+
+      <div className="mb-6">
+        <ContainerList />
+      </div>
+    </div>
+  )
+}
+
+export default Dashboard
+
