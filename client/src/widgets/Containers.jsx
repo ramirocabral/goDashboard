@@ -9,7 +9,6 @@ const Containers = () => {
   const [filter, setFilter] = useState("")
   const [expanded, setExpanded] = useState(false)
 
-  // Filter containers based on search input
   const filteredContainers =
     containerData?.filter(
       (container) =>
@@ -18,7 +17,6 @@ const Containers = () => {
         container.id.toLowerCase().includes(filter.toLowerCase()),
     ) || []
 
-  // Format container uptime
   const formatUptime = (seconds) => {
     if (!seconds) return "N/A"
 
@@ -35,7 +33,6 @@ const Containers = () => {
     }
   }
 
-  // Get status color
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case "running":
@@ -49,7 +46,6 @@ const Containers = () => {
     }
   }
 
-  // Get status background color
   const getStatusBgColor = (status) => {
     switch (status.toLowerCase()) {
       case "running":

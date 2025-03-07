@@ -41,7 +41,7 @@ const CpuCard = () => {
         icon={<Cpu className="h-5 w-5 text-blue-500" />}
         title="Processor"
         subtitle={cpuData?.model_name || "NULL"} 
-        value={cpuData?.usage?.usage_percentage?.toFixed(1) || "0.0" + "%"}
+        value={(cpuData?.usage?.usage_percentage?.toFixed(1) || "0.0") + "%"}
         secondValue={(cpuData?.temp || "NULL") + "°C"}
       />
       <InfoGrid

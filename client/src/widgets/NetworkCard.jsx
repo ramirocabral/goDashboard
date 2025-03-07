@@ -4,8 +4,12 @@ import { useState, useEffect } from "react"
 import { useWebSocket } from "../contexts/WebSocketContext"
 import { Area, AreaChart, ResponsiveContainer } from "recharts"
 import { Network, ChevronDown, ChevronUp } from "lucide-react"
+import CardContainer from "../components/cards/CardContainer"
+import CardHeader from "../components/cards/CardHeader"
+import Chart from "../components/cards/Chart"
+import InfoGrid from "../components/cards/InfoGrid"
 
-const NetworkCard = ({ splitView }) => {
+const NetworkCard = () => {
   const { networkData } = useWebSocket()
   const [realtimeData, setRealtimeData] = useState({})
   const [selectedInterface, setSelectedInterface] = useState(null)
@@ -35,7 +39,8 @@ const NetworkCard = ({ splitView }) => {
   const currentInterfaceData = interfaces.find((iface) => iface.interface === selectedInterface) ||
     interfaces[0] || { interface: "N/A", usage: { rx_bytes_ps: 0, tx_bytes_ps: 0 } }
 
- useEffect(() => {
+  // Update realtime data when new network data arrives
+  useEffect(() => {
     if (networkData && interfaces.length > 0) {
       console.log("Network data for chart:", networkData)
 
@@ -77,22 +82,43 @@ const NetworkCard = ({ splitView }) => {
   // Get data for the selected interface
   const selectedInterfaceData = realtimeData[selectedInterface] || []
 
+  // Prepare data for InfoGrid component
+  const networkInfoData = [
+    {
+      label: "Download",
+      value: formatBytes(currentInterfaceData.usage?.rx_bytes_ps || 0) + "/s",
+    },
+    {
+      label: "Upload",
+      value: formatBytes(currentInterfaceData.usage?.tx_bytes_ps || 0) + "/s",
+    },
+  ]
+
+  // Add interface count info if there are multiple interfaces
+  if (interfaces.length > 1) {
+    networkInfoData.push(
+      { label: "Interfaces", value: interfaces.length.toString() },
+      { label: "Active", value: interfaces.length.toString() },
+    )
+  }
+
   return (
-    <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-6 shadow-lg transition-all hover:shadow-xl">
-      {/* Icon and Title */}
-      <div className="mb-6 flex items-center justify-between">
+    <CardContainer>
+      {/* Custom header to avoid nesting issues */}
+      <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="rounded-lg bg-yellow-500/10 p-2">
             <Network className="h-5 w-5 text-yellow-500" />
           </div>
           <div>
-            <h3 className="text-xl font-medium text-gray-200">Network</h3>
+            <h3 className="text-sm font-medium text-gray-200">Network</h3>
+            {/* Interface selector as a sibling, not a child of p */}
             <div className="relative">
               <button
                 onClick={() => setShowInterfaceSelector(!showInterfaceSelector)}
                 className="flex items-center text-xs text-gray-400 hover:text-gray-300"
               >
-                {currentInterfaceData.interface}
+                {currentInterfaceData?.interface}
                 {interfaces.length > 1 &&
                   (showInterfaceSelector ? (
                     <ChevronUp className="ml-1 h-3 w-3" />
@@ -137,68 +163,22 @@ const NetworkCard = ({ splitView }) => {
       </div>
 
       {/* Network Stats */}
-      <div className="mb-6 grid grid-cols-2 gap-4">
-        <div>
-          <p className="text-xs text-gray-400">Download</p>
-          <p className="text-sm font-medium text-gray-200">
-            {formatBytes(currentInterfaceData.usage?.rx_bytes_ps || 0)}/s
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-gray-400">Upload</p>
-          <p className="text-sm font-medium text-gray-200">
-            {formatBytes(currentInterfaceData.usage?.tx_bytes_ps || 0)}/s
-          </p>
-        </div>
-        {interfaces.length > 1 && (
-          <>
-            <div>
-              <p className="text-xs text-gray-400">Interfaces</p>
-              <p className="text-sm font-medium text-gray-200">{interfaces.length}</p>
-            </div>
-            <div>
-              <p className="text-xs text-gray-400">Active</p>
-              <p className="text-sm font-medium text-gray-200">{interfaces.length}</p>
-            </div>
-          </>
-        )}
-      </div>
+      <InfoGrid data={networkInfoData} />
 
-      {/* Graphs */}
-        <div className="h-32">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={selectedInterfaceData}>
-            <defs>
-              <linearGradient id="networkGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="rgb(234, 179, 8)" stopOpacity={0.3} />
-                <stop offset="100%" stopColor="rgb(234, 179, 8)" stopOpacity={0} />
-              </linearGradient>
-            </defs>
-            <Area
-              type="monotone"
-              dataKey="download"
-              stroke="rgb(234, 179, 8)"
-              strokeWidth={2}
-              fill="url(#networkGradient)"
-              isAnimationActive={false}
-              dot={false}
-            />
-            <Area
-              type="monotone"
-              dataKey="upload"
-              stroke="rgb(234, 179, 8)"
-              strokeWidth={1}
-              strokeDasharray="3 3"
-              fill="none"
-              isAnimationActive={false}
-              dot={false}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+      {/* Single chart for network data */}
+      <div className="h-32">
+        <Chart
+          realTimeData={selectedInterfaceData}
+          id="networkGradient"
+          stopColor="rgb(234, 179, 8)"
+          dataKey="download"
+          stroke="rgb(234, 179, 8)"
+          strokeWidth={2}
+          fill="url(#networkGradient)"
+        />
       </div>
-  </div>
+    </CardContainer>
   )
 }
 
 export default NetworkCard
-

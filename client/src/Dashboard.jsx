@@ -60,11 +60,6 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
         </div>
       </header>
 
-
-      {/* <div className="mb-6">
-        <SystemInfo />
-      </div> */}
-
       <div className="grid-container mb-6 grid-cols-3">
         <SysInfo />
         <HostInfo />
@@ -72,10 +67,10 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
       </div>
 
       <div className="grid-container mb-6">
-        <CpuCard showAllCores={showAllCores} />
+        <CpuCard/>
         <MemoryCard />
+        <NetworkCard/>
         <StorageCard />
-        <NetworkCard splitView={splitView} />
       </div>
 
       <div className="mb-6">
