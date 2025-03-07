@@ -1,17 +1,18 @@
 "use client"
 
 import { useState } from "react"
-import CpuCard from "./cards/CpuCard"
-import MemoryCard from "./cards/MemoryCard"
-import StorageCard from "./cards/StorageCard"
-import NetworkCard from "./cards/NetworkCard"
-import ContainerList from "./ContainerList"
+import CpuCard from "./widgets/CpuCard"
+import MemoryCard from "./widgets/MemoryCard"
+import StorageCard from "./widgets/StorageCard"
+import NetworkCard from "./widgets/NetworkCard"
+import Containers from "./widgets/Containers"
+import ContainerList from "./components/ContainerList"
 // import SystemInfo from "./SystemInfo"
-import HostInfo from "./HostInfo"
-import DisksInfo from "./DisksInfo"
-import SmartData from "./SmartData"
-import { useWebSocket } from "../contexts/WebSocketContext"
-import SysInfo from "./SysInfo"
+import HostInfo from "./components/HostInfo"
+import DisksInfo from "./components/DisksInfo"
+import SmartData from "./components/SmartData"
+import { useWebSocket } from "./contexts/WebSocketContext"
+import SysInfo from "./components/SysInfo"
 
 const Dashboard = ({ darkMode, setDarkMode }) => {
   const { connected } = useWebSocket()
@@ -67,7 +68,7 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
       <div className="grid-container mb-6 grid-cols-3">
         <SysInfo />
         <HostInfo />
-        <HostInfo />
+        <Containers />
       </div>
 
       <div className="grid-container mb-6">

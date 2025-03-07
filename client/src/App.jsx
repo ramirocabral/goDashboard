@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { WebSocketProvider } from "./contexts/WebSocketContext"
-import Dashboard from "./components/Dashboard"
+import Dashboard from "./Dashboard"
 
 function App() {
   const [darkMode, setDarkMode] = useState(false)

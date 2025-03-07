@@ -1,9 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useWebSocket } from "../../contexts/WebSocketContext"
+import { useWebSocket } from "../contexts/WebSocketContext"
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts"
-import TimeRangeSelector from "../TimeRangeSelector"
+import TimeRangeSelector from "../components/TimeRangeSelector"
 import { subSeconds } from "date-fns"
 
 const StorageCard = () => {
