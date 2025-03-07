@@ -7,6 +7,8 @@ import(
 //models for getting historical data
 type CPUResponse struct{
     ModelName   string          `json:"model_name"`
+    Frequency   uint64          `json:"frequency"`
+    Family      string          `json:"family"`
     Cores       uint64          `json:"cores"`
     Threads     uint64          `json:"threads"`
     Data        []CPUPoint      `json:"data"`
@@ -34,6 +36,8 @@ type IOPoint struct{
 }
 
 type MemoryResponse struct{
+    Type        string          `json:"type"`
+    Frequency   uint64          `json:"frequency"`
     Data        []MemoryPoint   `json:"stats"`
 }
 

@@ -1,21 +1,23 @@
 package cpu
 
 import (
-    "log"
-    "strings"
-    "time"
+	"log"
+	"strings"
+	"time"
 
-    "golang-system-monitor/internal/utils"
-    "golang-system-monitor/internal/core"
+	"golang-system-monitor/internal/core"
+	"golang-system-monitor/internal/utils"
 
-    "github.com/shirou/gopsutil/v3/cpu"
+	"github.com/shirou/gopsutil/v3/cpu"
 )
 
 type CPU struct{
-    ModelName string            `json:"model_name"`
-    Cores uint64                `json:"cores"`
-    Threads uint64              `json:"threads"`
-    Temp uint64                 `json:"temp"`
+    ModelName       string      `json:"model_name"`
+    Frequency       uint64      `json:"frequency"`
+    Family          string      `json:"family"`
+    Cores           uint64      `json:"cores"`
+    Threads         uint64      `json:"threads"`
+    Temp            uint64      `json:"temp"`
     UsageStatistics Usage       `json:"usage"`
 }
 
@@ -30,6 +32,8 @@ func (c CPU) ToPoint() []*core.Point{
         Measurement: "cpu",
         Tags: map[string]string{
             "model_name": c.ModelName,
+            "frequency": utils.Uint64ToStr(c.Frequency),
+            "family": c.Family,
             "cores": utils.Uint64ToStr(c.Cores),
             "threads": utils.Uint64ToStr(c.Threads),
         },
@@ -64,8 +68,8 @@ func ReadCPU() (CPU, error){
     usage.UsagePercentage = utils.RoundFloat(percentages[0], 2)
     usage.IdlePercentage = utils.RoundFloat(100 - percentages[0], 2)
 
-    output.UsageStatistics = usage
 
+    output.UsageStatistics = usage
     //get cpu temperature
     tmp,err := getCpuTemp()
 
@@ -75,7 +79,6 @@ func ReadCPU() (CPU, error){
     }
     output.Temp = tmp
 
-
     //get cpu model info
     cpuInfo, err := getCpuInfo()
     if err != nil{
@@ -83,55 +86,14 @@ func ReadCPU() (CPU, error){
         return CPU{}, err
     }
 
+    output.Frequency = cpuInfo.Frequency
+    output.Family = cpuInfo.Family
     output.ModelName = cpuInfo.ModelName
     output.Cores = cpuInfo.Cores
     output.Threads = cpuInfo.Threads
 
     return output, nil
 }
-
-// func getCPUStats()(CPU, error){
-//     output := CPU{}
-//
-//     cpuData, err := utils.ReadFile(CPU_PATH)
-//     if err != nil{
-//         log.Println("Error reading CPU data: ", err)
-//         return output, err
-//     }
-//
-//     cpuDataStr := strings.Split((cpuData), "\n")
-//
-//     core_data := strings.Fields(cpuDataStr[0])
-//
-//     usr, nice, system, idle, iowait, irq, softirq := core_data[1], core_data[2], core_data[3], core_data[4], core_data[5], core_data[6], core_data[7]
-//
-//     usr64 := utils.StrToUint64(usr)
-//     nice64 := utils.StrToUint64(nice)
-//     system64 := utils.StrToUint64(system)
-//     idle64 := utils.StrToUint64(idle)
-//     iowait64 := utils.StrToUint64(iowait)
-//     irq64 := utils.StrToUint64(irq)
-//     softirq64 := utils.StrToUint64(softirq)
-//
-//     total := usr64 + nice64 + system64 + idle64 + iowait64 + irq64 + softirq64
-//
-//     fmt.Println(total)
-//
-//     usage := Usage{}
-//
-//     usage.UsagePercentage = (float64(total - idle64) / float64(total)) * 100
-//
-//     fmt.Println(usage.UsagePercentage)
-//     usage.IdlePercentage = (float64(idle64) / float64(total)) * 100
-//     fmt.Println(usage.IdlePercentage)
-//     usage.UserPercentage = float64(usr64 / total) * 100
-//     usage.SystemPercentage = float64(system64 / total) * 100
-//     usage.IoWaitPercentage = float64(iowait64 / total) * 100
-//
-//     output.UsageStatistics = usage
-//
-//     return output, nil
-// }
 
 func getCpuTemp() (uint64, error){
     tempFile, err := utils.FindCPUTempFile()
@@ -158,6 +120,22 @@ func getCpuTemp() (uint64, error){
 
 func getCpuInfo() (CPU, error){
     output := CPU{}
+
+    lines, err := utils.ExecuteCommand("dmidecode", "-t", "4")
+
+    if err != nil{
+        log.Println("Error reading CPU info: ", err)
+        return CPU{}, err
+    }
+
+    for _, line := range strings.Split(lines, "\n"){
+        if strings.Contains(line, "Max Speed"){
+            output.Frequency = utils.StrToUint64(strings.Fields(line)[2])
+        }
+        if strings.HasPrefix(strings.TrimSpace(line), "Family"){
+            output.Family = strings.TrimSpace(strings.Split(line, ":")[1])
+        }
+    }
 
     cpuInfo, err := utils.ReadFile(CPU_INFO_PATH)
 

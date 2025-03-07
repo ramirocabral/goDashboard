@@ -98,6 +98,8 @@ func parseCpuStats(result *api.QueryTableResult) storage.CPUResponse{
     for result.Next() {
 	record := result.Record()
 	stats.ModelName = record.ValueByKey("model_name").(string)
+	stats.Frequency = utils.StrToUint64(record.ValueByKey("frequency").(string))
+	stats.Family = record.ValueByKey("family").(string)
 	stats.Cores = utils.StrToUint64(record.ValueByKey("cores").(string))
 	stats.Threads = utils.StrToUint64(record.ValueByKey("threads").(string))
 
@@ -199,37 +201,44 @@ func (s *InfluxStore) ReadMemoryStats(startTime, endTime time.Time, interval str
 }
 
 func parseMemoryStats(result *api.QueryTableResult) storage.MemoryResponse{
-
     var response storage.MemoryResponse
 
-	for result.Next() {
-		record := result.Record()
-		timestamp := record.Time()
-		usedPercentage := utils.RoundFloat(record.ValueByKey("used_percentage").(float64),2)
-		total := uint64(record.ValueByKey("total").(float64))
-		used := uint64(record.ValueByKey("used").(float64))
-		free := uint64(record.ValueByKey("free").(float64))
-		active := uint64(record.ValueByKey("active").(float64))
-		inactive := uint64(record.ValueByKey("inactive").(float64))
-		buffers := uint64(record.ValueByKey("buffers").(float64))
-		cached := uint64(record.ValueByKey("cached").(float64))
+    data := make([]storage.MemoryPoint, 0)
 
-		point := storage.MemoryPoint{
-			Timestamp:      timestamp,
-			UsedPercentage: usedPercentage,
-			Total:          total,
-			Used:           used,
-			Free:           free,
-			Active:         active,
-			Inactive:       inactive,
-			Buffers:        buffers,
-			Cached:         cached,
-		}
+    for result.Next() {
+	record := result.Record()
+	response.Type = record.ValueByKey("type").(string)
+	response.Frequency = utils.StrToUint64(record.ValueByKey("frequency").(string))
+	
+	timestamp := record.Time()
+	usedPercentage := utils.RoundFloat(record.ValueByKey("used_percentage").(float64),2)
+	total := uint64(record.ValueByKey("total").(float64))
+	used := uint64(record.ValueByKey("used").(float64))
+	free := uint64(record.ValueByKey("free").(float64))
+	active := uint64(record.ValueByKey("active").(float64))
+	inactive := uint64(record.ValueByKey("inactive").(float64))
+	buffers := uint64(record.ValueByKey("buffers").(float64))
+	cached := uint64(record.ValueByKey("cached").(float64))
 
-		response.Data = append(response.Data, point)
+	point := storage.MemoryPoint{
+	    Timestamp: timestamp,
+	    UsedPercentage: usedPercentage,
+	    Total: total,
+	    Used: used,
+	    Free: free,
+	    Active: active,
+	    Inactive: inactive,
+	    Buffers: buffers,
+	    Cached: cached,
 	}
+    
+	data = append(data, point)
 
-	return response
+    }
+    
+    response.Data = data
+
+    return response
 }
 
 func (s *InfluxStore) ReadNetworkStats(startTime, endTime time.Time, interval string) (storage.NetworkResponse, error){

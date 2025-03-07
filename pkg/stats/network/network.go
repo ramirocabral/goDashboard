@@ -62,7 +62,7 @@ func ReadNetworks() (Networks, error){
 
     for _, iface := range ifaces{
 
-        if strings.HasPrefix(iface, "lo") || strings.HasPrefix(iface, "docker") || strings.HasPrefix(iface, "br") || iface == "" || strings.HasPrefix(iface, "veth") {
+        if strings.HasPrefix(iface, "docker") || strings.HasPrefix(iface, "br") || iface == "" || strings.HasPrefix(iface, "veth") {
             continue
         }
 
