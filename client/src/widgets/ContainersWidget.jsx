@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useWebSocket } from "../contexts/WebSocketContext"
+import CardContainer from "../components/cards/CardContainer"
 import { Box, Play, Pause, RotateCcw, Search, ChevronDown, ChevronUp } from "lucide-react"
 
 const Containers = () => {
@@ -60,7 +61,7 @@ const Containers = () => {
   }
 
   return (
-    <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-4 shadow-lg transition-all hover:shadow-xl">
+    <CardContainer>
       {/* Icon and Title */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
@@ -69,7 +70,9 @@ const Containers = () => {
           </div>
           <div>
             <h3 className="text-sm font-medium text-gray-200">Containers</h3>
-            <p className="text-xs text-gray-400">{containerData?.containers?.length || 0} containers</p>
+            <p className="text-xs text-gray-400">
+              {containerData?.containers?.length || 0} containers
+            </p>
           </div>
         </div>
         <div className="flex items-center space-x-2">
@@ -83,7 +86,10 @@ const Containers = () => {
               onChange={(e) => setFilter(e.target.value)}
             />
           </div>
-          <button className="rounded-md bg-gray-800 p-1 hover:bg-gray-700" onClick={() => setExpanded(!expanded)}>
+          <button
+            className="rounded-md bg-gray-800 p-1 hover:bg-gray-700"
+            onClick={() => setExpanded(!expanded)}
+          >
             {expanded ? (
               <ChevronUp className="h-4 w-4 text-gray-400" />
             ) : (
@@ -103,50 +109,70 @@ const Containers = () => {
       ) : (
         <div className="overflow-hidden">
           {filteredContainers.length === 0 ? (
-            <div className="py-4 text-center text-gray-400">No containers found</div>
+            <div className="py-4 text-center text-gray-400">
+              No containers found
+            </div>
           ) : (
             <div className="space-y-2">
-              {filteredContainers.slice(0, expanded ? filteredContainers.length : 3).map((container) => (
-                <div
-                  key={container.id}
-                  className="flex items-center justify-between rounded-md bg-gray-800/50 p-2 hover:bg-gray-800"
-                >
-                  <div className="flex items-center space-x-2">
-                    <div
-                      className={`h-2 w-2 rounded-full ${container.status.toLowerCase() === "running" ? "bg-green-500" : container.status.toLowerCase() === "paused" ? "bg-yellow-500" : "bg-red-500"}`}
-                    ></div>
-                    <div>
-                      <p className="text-sm font-medium text-gray-200">{container.name}</p>
-                      <p className="text-xs text-gray-400">{container.image}</p>
+              {filteredContainers
+                .slice(0, expanded ? filteredContainers.length : 3)
+                .map((container) => (
+                  <div
+                    key={container.id}
+                    className="flex items-center justify-between rounded-md bg-gray-800/50 p-2 hover:bg-gray-800"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <div
+                        className={`h-2 w-2 rounded-full ${
+                          container.status.toLowerCase() === "running"
+                            ? "bg-green-500"
+                            : container.status.toLowerCase() === "paused"
+                            ? "bg-yellow-500"
+                            : "bg-red-500"
+                        }`}
+                      ></div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-200">
+                          {container.name}
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          {container.image}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <div className="text-right">
+                        <p className="text-xs text-gray-400">
+                          CPU: {container.cpu_usage}%
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          MEM: {container.memory_usage} MB
+                        </p>
+                      </div>
+                      <div
+                        className={`rounded-md px-2 py-1 text-xs ${getStatusBgColor(
+                          container.status
+                        )} ${getStatusColor(container.status)}`}
+                      >
+                        {container.status}
+                      </div>
+                      <div className="flex space-x-1">
+                        {container.status.toLowerCase() !== "running" ? (
+                          <button className="rounded-md p-1 text-green-500 hover:bg-gray-700">
+                            <Play className="h-3 w-3" />
+                          </button>
+                        ) : (
+                          <button className="rounded-md p-1 text-yellow-500 hover:bg-gray-700">
+                            <Pause className="h-3 w-3" />
+                          </button>
+                        )}
+                        <button className="rounded-md p-1 text-blue-500 hover:bg-gray-700">
+                          <RotateCcw className="h-3 w-3" />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="text-right">
-                      <p className="text-xs text-gray-400">CPU: {container.cpu_usage}%</p>
-                      <p className="text-xs text-gray-400">MEM: {container.memory_usage} MB</p>
-                    </div>
-                    <div
-                      className={`rounded-md px-2 py-1 text-xs ${getStatusBgColor(container.status)} ${getStatusColor(container.status)}`}
-                    >
-                      {container.status}
-                    </div>
-                    <div className="flex space-x-1">
-                      {container.status.toLowerCase() !== "running" ? (
-                        <button className="rounded-md p-1 text-green-500 hover:bg-gray-700">
-                          <Play className="h-3 w-3" />
-                        </button>
-                      ) : (
-                        <button className="rounded-md p-1 text-yellow-500 hover:bg-gray-700">
-                          <Pause className="h-3 w-3" />
-                        </button>
-                      )}
-                      <button className="rounded-md p-1 text-blue-500 hover:bg-gray-700">
-                        <RotateCcw className="h-3 w-3" />
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+                ))}
 
               {filteredContainers.length > 3 && !expanded && (
                 <button
@@ -169,8 +195,8 @@ const Containers = () => {
           )}
         </div>
       )}
-    </div>
-  )
+    </CardContainer>
+  );
 }
 
 export default Containers

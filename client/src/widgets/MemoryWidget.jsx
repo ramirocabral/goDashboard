@@ -50,7 +50,7 @@ const MemoryWidget = () => {
       <CardHeader
         icon={<Memory className="h-5 w-5 text-red-500" />}
         title="Memory"
-        subtitle="DDR4 3200MHz"
+        subtitle={`${memoryData?.type} ${memoryData?.frequency} MHz`}
         value={(((memoryData?.used / memoryData?.total) * 100)?.toFixed(1) || "0.0") + "%"}
         secondValue={`${formatBytes(memoryData?.used)} / ${formatBytes(memoryData?.total)}`} 
       />

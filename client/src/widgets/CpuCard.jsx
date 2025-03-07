@@ -42,10 +42,10 @@ const CpuWidget = () => {
       />
       <InfoGrid
         data={[
+          { label: "Frequency", value: cpuData?.frequency || "2.6" + " GHz" },
+          { label: "Family", value: cpuData?.family || "x64" },
           { label: "Cores", value: cpuData?.cores || "NULL" },
           { label: "Threads", value: cpuData?.threads || "NULL" },
-          { label: "Frequency", value: cpuData?.info?.frequency || "2.6" + " GHz" },
-          { label: "Architecture", value: "x64" },
         ]}
        />
       <Chart 

@@ -17,7 +17,7 @@ const WS_ENDPOINTS = {
 
 // REST API endpoints
 const API_ENDPOINTS = {
-  HOST_INFO: "http://localhost:8080/api/v1/stat/host",
+  SYSTEM_INFO: "http://localhost:8080/api/v1/stat/host",
   DISKS: "http://localhost:8080/api/v1/stat/disk",
   SMART: "http://localhost:8080/api/v1/stat/smart",
 }
@@ -32,7 +32,7 @@ export const WebSocketProvider = ({ children }) => {
   const [ioData, setIoData] = useState(null)
 
   // State for REST API data
-  const [hostInfo, setHostInfo] = useState(null)
+  const [systemInfo, setSystemInfo] = useState(null)
   const [disksInfo, setDisksInfo] = useState(null)
   const [smartData, setSmartData] = useState(null)
 
@@ -125,18 +125,18 @@ export const WebSocketProvider = ({ children }) => {
     }
   }, [createWebSocket])
 
-  // Fetch host info, disks info, and SMART data on component mount
+  // Fetch system info, disks info, and SMART data on component mount
   useEffect(() => {
-    const fetchHostInfo = async () => {
+    const fetchSystemInfo = async () => {
       try {
-        const response = await fetch(API_ENDPOINTS.HOST_INFO)
+        const response = await fetch(API_ENDPOINTS.SYSTEM_INFO)
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
         const data = await response.json()
-        setHostInfo(data)
+        setSystemInfo(data)
       } catch (error) {
-        console.error("Error fetching host info:", error)
+        console.error("Error fetching system info:", error)
       }
     }
 
@@ -166,14 +166,14 @@ export const WebSocketProvider = ({ children }) => {
       }
     }
 
-    fetchHostInfo()
+    fetchSystemInfo()
     fetchDisksInfo()
     fetchSmartData()
 
     // refresh the data every 5 minutes
     const interval = setInterval(
       () => {
-        fetchHostInfo()
+        fetchSystemInfo()
         fetchDisksInfo()
         fetchSmartData()
       },
@@ -203,15 +203,15 @@ export const WebSocketProvider = ({ children }) => {
   // Function to refresh static data
   const refreshStaticData = async () => {
     try {
-      const [hostResponse, disksResponse, smartResponse] = await Promise.all([
-        fetch(API_ENDPOINTS.HOST_INFO),
+      const [systemResponse, disksResponse, smartResponse] = await Promise.all([
+        fetch(API_ENDPOINTS.SYSTEM_INFO),
         fetch(API_ENDPOINTS.DISKS),
         fetch(API_ENDPOINTS.SMART),
       ])
 
-      if (hostResponse.ok) {
-        const hostData = await hostResponse.json()
-        setHostInfo(hostData)
+      if (systemResponse.ok) {
+        const hostData = await systemResponse.json()
+        setSystemInfo(hostData)
       }
 
       if (disksResponse.ok) {
@@ -240,7 +240,7 @@ export const WebSocketProvider = ({ children }) => {
         containerData,
         uptimeData,
         ioData,
-        hostInfo,
+        systemInfo,
         disksInfo,
         smartData,
         connected,

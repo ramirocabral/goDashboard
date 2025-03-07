@@ -1,12 +1,12 @@
 import React from 'react';
 import { Github } from 'lucide-react';
+import { useWebSocket } from '../contexts/WebSocketContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faApple,
     faCentos,
     faDebian,
     faFedora,
-    faGithub,
     faLinux,
     faRedhat,
     faSuse,
@@ -15,18 +15,10 @@ import {
   } from '@fortawesome/free-brands-svg-icons';
 
 const SystemWidget = () => {
-    
-  const systemInfo = {
-    name: "dash.",
-    os: "Ubuntu 22.04 LTS",
-    arch: "x64",
-    uptime: "27 minutes"
-  };
+  const { systemInfo } = useWebSocket()
+  const { uptimeData } = useWebSocket()
 
-  const osLogo = getOsLogo("debian");
-
-  // State for dark mode toggle
-  const [darkMode, setDarkMode] = React.useState(true);
+  const sysInfo = systemInfo
 
   return (
     <div className="shadow-sm border border-border bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-8">
@@ -36,29 +28,37 @@ const SystemWidget = () => {
           <Github className="text-white h-5 w-5" />
         </div>
 
-      {/* Center content with circular background */}
+      {!sysInfo ? (
+        <div className="text-center text-gray-400 mt-4">Loading system data...</div>
+      ):(
+
       <div className="relative flex flex-col items-center justify-center p-10 overflow-visible">
         <div className="absolute w-64 h-64 bg-gray-800/40 rounded-full flex items-center justify-center">
-          <FontAwesomeIcon icon={osLogo} className="w-48 h-48 opacity-15" />
+          <FontAwesomeIcon icon={getOsLogo(sysInfo.os)} className="w-48 h-48 opacity-15" />
         </div>
          
 
-        <h1 className="text-white text-4xl font-bold z-10">gelsomina</h1>
+        <h1 className="text-white text-4xl font-bold z-10">{sysInfo.hostname}</h1>
 
         {/* System details */}
         <div className="mt-8 text-gray-300 text-sm z-10">
           <div className="grid grid-cols-2 gap-x-4 gap-y-1">
             <div className="text-gray-400">OS</div>
-            <div>ArchLinux</div>
-            <div className="text-gray-400">Arch</div>
-            <div>x64</div>
-            <div className="text-gray-400">Up since</div>
-            <div>2h</div>
+            <div>{sysInfo.os}</div>
+            <div className="text-gray-400">Kernel</div>
+            <div>{sysInfo.kernel}</div>
+            <div className="text-gray-400">Uptime</div>
+            {uptimeData ? (
+              <div>{formatUptime(uptimeData.uptime)}</div>
+            ) : (
+              <div className="animate-pulse">Loading...</div>
+            )}
           </div>
         </div>
       </div>
-    </div>
+    )}
   </div>
+</div>
   );
 };
 
@@ -76,8 +76,6 @@ function getOsLogo(os){
     icon = faFedora;
   } else if (os.includes('centos')) {
     icon = faCentos;
-  } else if (os.includes('linux')) {
-    icon = faLinux;
   } else if (
     os.includes('mac') ||
     os.includes('osx') ||
@@ -93,5 +91,20 @@ function getOsLogo(os){
 
   return icon;
 }
+const formatUptime = (seconds) => {
+  if (!seconds) return "0 minutes"
+
+  const days = Math.floor(seconds / 86400)
+  const hours = Math.floor((seconds % 86400) / 3600)
+  const minutes = Math.floor((seconds % 3600) / 60)
+
+  let result = ""
+  if (days > 0) result += `${days} day${days > 1 ? "s" : ""} `
+  if (hours > 0) result += `${hours} hour${hours > 1 ? "s" : ""} `
+  if (minutes > 0) result += `${minutes} minute${minutes > 1 ? "s" : ""}`
+
+  return result.trim()
+}
+
 
 export default SystemWidget;
