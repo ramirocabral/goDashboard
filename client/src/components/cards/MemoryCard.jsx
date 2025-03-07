@@ -9,14 +9,14 @@ const MemoryCard = () => {
   const { memoryData } = useWebSocket()
   const [realtimeData, setRealtimeData] = useState([])
 
-  // Format bytes to human-readable format
-  const formatBytes = (bytes, decimals = 2) => {
-    if (!bytes) return "0 B"
-    const k = 1024
-    const dm = decimals < 0 ? 0 : decimals
-    const sizes = ["B", "KB", "MB", "GB", "TB"]
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return `${Number.parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+  //data received is in kb
+  const formatBytes = (kbytes, decimals = 2) => {
+    if (!kbytes) return "0 B"
+    const sizes = ["KB", "MB", "GB", "TB"]
+    const i = Math.floor(Math.log(kbytes) / Math.log(1024))
+    return `${parseFloat((kbytes / Math.pow(1024, i)).toFixed(decimals))} ${sizes
+      [i]}
+    `
   }
 
   // Update realtime data when new memory data arrives
@@ -27,7 +27,7 @@ const MemoryCard = () => {
           ...prev,
           {
             time: Date.now(),
-            value: (memoryData.current?.used / memoryData.current?.total) * 100 || 0,
+            value: (memoryData.used / memoryData.total) * 100 || 0,
             swap: (memoryData.current?.swap_used / memoryData.current?.swap_total) * 100 || 0,
           },
         ]
@@ -56,10 +56,10 @@ const MemoryCard = () => {
         </div>
         <div className="text-right">
           <p className="text-2xl font-bold text-gray-200">
-            {((memoryData?.current?.used / memoryData?.current?.total) * 100)?.toFixed(1) || "0.0"}%
+            {((memoryData?.used / memoryData?.total) * 100)?.toFixed(1) || "0.0"}%
           </p>
           <p className="text-xs text-gray-400">
-            {formatBytes(memoryData?.current?.used)} / {formatBytes(memoryData?.current?.total)}
+            {formatBytes(memoryData?.used)} / {formatBytes(memoryData?.total)}
           </p>
         </div>
       </div>
@@ -67,22 +67,20 @@ const MemoryCard = () => {
       {/* Memory Stats */}
       <div className="mb-4 grid grid-cols-2 gap-4">
         <div>
-          <p className="text-xs text-gray-400">Used</p>
-          <p className="text-sm font-medium text-gray-200">{formatBytes(memoryData?.current?.used)}</p>
+          <p className="text-xs text-gray-400">Active</p>
+          <p className="text-sm font-medium text-gray-200">{formatBytes(memoryData?.active)}</p>
         </div>
         <div>
-          <p className="text-xs text-gray-400">Available</p>
-          <p className="text-sm font-medium text-gray-200">
-            {formatBytes(memoryData?.current?.total - memoryData?.current?.used)}
-          </p>
+          <p className="text-xs text-gray-400">Inactive</p>
+          <p className="text-sm font-medium text-gray-200"> {formatBytes(memoryData?.inactive)}</p>
         </div>
         <div>
-          <p className="text-xs text-gray-400">Swap Used</p>
-          <p className="text-sm font-medium text-gray-200">{formatBytes(memoryData?.current?.swap_used)}</p>
+          <p className="text-xs text-gray-400">Buffers</p>
+          <p className="text-sm font-medium text-gray-200">{formatBytes(memoryData?.buffers)}</p>
         </div>
         <div>
-          <p className="text-xs text-gray-400">Swap Total</p>
-          <p className="text-sm font-medium text-gray-200">{formatBytes(memoryData?.current?.swap_total)}</p>
+          <p className="text-xs text-gray-400">Cached</p>
+          <p className="text-sm font-medium text-gray-200">{formatBytes(memoryData?.cached)}</p>
         </div>
       </div>
 

@@ -6,11 +6,12 @@ import MemoryCard from "./cards/MemoryCard"
 import StorageCard from "./cards/StorageCard"
 import NetworkCard from "./cards/NetworkCard"
 import ContainerList from "./ContainerList"
-import SystemInfo from "./SystemInfo"
+// import SystemInfo from "./SystemInfo"
 import HostInfo from "./HostInfo"
 import DisksInfo from "./DisksInfo"
 import SmartData from "./SmartData"
 import { useWebSocket } from "../contexts/WebSocketContext"
+import SysInfo from "./SysInfo"
 
 const Dashboard = ({ darkMode, setDarkMode }) => {
   const { connected } = useWebSocket()
@@ -44,18 +45,6 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
             </label>
           </div>
           <div className="flex items-center">
-            <span className="mr-2 text-sm">Show All Cores</span>
-            <label className="switch">
-              <input
-                type="checkbox"
-                className="switch-input"
-                checked={showAllCores}
-                onChange={() => setShowAllCores(!showAllCores)}
-              />
-              <span className="switch-slider"></span>
-            </label>
-          </div>
-          <div className="flex items-center">
             <span className="mr-2 text-sm">Split View</span>
             <label className="switch">
               <input
@@ -70,12 +59,15 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
         </div>
       </header>
 
-      <div className="mb-6">
-        <HostInfo />
-      </div>
 
-      <div className="mb-6">
+      {/* <div className="mb-6">
         <SystemInfo />
+      </div> */}
+
+      <div className="grid-container mb-6 grid-cols-3">
+        <SysInfo />
+        <HostInfo />
+        <HostInfo />
       </div>
 
       <div className="grid-container mb-6">

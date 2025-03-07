@@ -5,7 +5,7 @@ import { useWebSocket } from "../../contexts/WebSocketContext"
 import { Area, AreaChart, ResponsiveContainer } from "recharts"
 import { Cpu } from "lucide-react"
 
-const CpuCard = ({ showAllCores }) => {
+const CpuCard = ({}) => {
   const { cpuData } = useWebSocket()
   const [realtimeData, setRealtimeData] = useState([])
 
@@ -59,14 +59,14 @@ const CpuCard = ({ showAllCores }) => {
           <p className="text-xs text-gray-400">Threads</p>
           <p className="text-sm font-medium text-gray-200">{cpuData?.threads || "NULL"}</p>
         </div>
-        {/* <div>
+        <div>
           <p className="text-xs text-gray-400">Frequency</p>
           <p className="text-sm font-medium text-gray-200">{cpuData?.info?.frequency || "2.6"} GHz</p>
         </div>
         <div>
           <p className="text-xs text-gray-400">Architecture</p>
           <p className="text-sm font-medium text-gray-200">x64</p>
-        </div> */}
+        </div>
       </div>
 
       {/* Graph */}
@@ -88,20 +88,6 @@ const CpuCard = ({ showAllCores }) => {
               isAnimationActive={false}
               dot={false}
             />
-            {showAllCores &&
-              cpuData?.info?.cores > 0 &&
-              Array.from({ length: cpuData.info.cores }).map((_, i) => (
-                <Area
-                  key={i}
-                  type="monotone"
-                  dataKey={`core${i}`}
-                  stroke={`rgb(59, 130, 246, ${0.3 + i * 0.1})`}
-                  strokeWidth={1}
-                  fill="none"
-                  isAnimationActive={false}
-                  dot={false}
-                />
-              ))}
           </AreaChart>
         </ResponsiveContainer>
       </div>

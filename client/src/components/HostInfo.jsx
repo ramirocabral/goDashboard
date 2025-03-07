@@ -5,8 +5,26 @@ import { useWebSocket } from "../contexts/WebSocketContext"
 import { RefreshCw } from "lucide-react"
 
 const HostInfo = () => {
+  const { uptimeData } = useWebSocket()
   const { hostInfo, refreshStaticData } = useWebSocket()
   const [isRefreshing, setIsRefreshing] = React.useState(false)
+
+  // Format uptime
+  const formatUptime = (seconds) => {
+    if (!seconds) return "0 minutes"
+
+    const days = Math.floor(seconds / 86400)
+    const hours = Math.floor((seconds % 86400) / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+
+    let result = ""
+    if (days > 0) result += `${days} day${days > 1 ? "s" : ""} `
+    if (hours > 0) result += `${hours} hour${hours > 1 ? "s" : ""} `
+    if (minutes > 0) result += `${minutes} minute${minutes > 1 ? "s" : ""}`
+
+    return result.trim()
+  }
+
 
   const handleRefresh = async () => {
     setIsRefreshing(true)
@@ -58,16 +76,8 @@ const HostInfo = () => {
             <div className="font-medium">{hostInfo.kernel || "N/A"}</div>
           </div>
           <div>
-            <div className="text-sm text-muted-foreground">Architecture</div>
-            <div className="font-medium">{hostInfo.architecture || "N/A"}</div>
-          </div>
-          <div>
-            <div className="text-sm text-muted-foreground">Platform</div>
-            <div className="font-medium">{hostInfo.platform || "N/A"}</div>
-          </div>
-          <div>
-            <div className="text-sm text-muted-foreground">Docker Version</div>
-            <div className="font-medium">{hostInfo.docker_version || "N/A"}</div>
+            <div className="text-sm text-muted-foreground">Uptime</div>
+            <div className="font-medium">{formatUptime(uptimeData?.uptime)}</div>
           </div>
         </div>
       </div>
@@ -76,4 +86,3 @@ const HostInfo = () => {
 }
 
 export default HostInfo
-
