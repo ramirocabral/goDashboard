@@ -170,7 +170,7 @@ export const WebSocketProvider = ({ children }) => {
     fetchDisksInfo()
     fetchSmartData()
 
-    // Refresh the data every 5 minutes
+    // refresh the data every 5 minutes
     const interval = setInterval(
       () => {
         fetchHostInfo()

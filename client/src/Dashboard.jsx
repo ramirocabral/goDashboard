@@ -1,25 +1,17 @@
 "use client"
 
-import { useState } from "react"
-import CpuCard from "./widgets/CpuCard"
-import MemoryCard from "./widgets/MemoryCard"
-import StorageCard from "./widgets/StorageCard"
+import CpuWidget from "./widgets/CpuCard"
+import MemoryWidget from "./widgets/MemoryWidget"
+import StorageWidget from "./widgets/StorageWidget"
 import NetworkCard from "./widgets/NetworkCard"
-import Containers from "./widgets/Containers"
-import ContainerList from "./components/ContainerList"
-// import SystemInfo from "./SystemInfo"
-import HostInfo from "./components/HostInfo"
-import DisksInfo from "./components/DisksInfo"
-import SmartData from "./components/SmartData"
+import Containers from "./widgets/ContainersWidget"
+import SmartWidget from "./widgets/SmartWidget"
 import { useWebSocket } from "./contexts/WebSocketContext"
-import SysInfo from "./components/SysInfo"
+import SystemWidget from "./widgets/SystemWidget"
 
-const Dashboard = ({ darkMode, setDarkMode }) => {
+const Dashboard = () => {
   const { connected } = useWebSocket()
-  const [splitView, setSplitView] = useState(false)
-  const [showAllCores, setShowAllCores] = useState(false)
 
-  // Calculate overall connection status
   const isConnected = Object.values(connected).some((status) => status)
 
   return (
@@ -32,57 +24,25 @@ const Dashboard = ({ darkMode, setDarkMode }) => {
             <span className="ml-2 text-sm">{isConnected ? "Connected" : "Disconnected"}</span>
           </div>
         </div>
-        <div className="flex items-center space-x-4">
-          <div className="flex items-center">
-            <span className="mr-2 text-sm">Dark Mode</span>
-            <label className="switch">
-              <input
-                type="checkbox"
-                className="switch-input"
-                checked={darkMode}
-                onChange={() => setDarkMode(!darkMode)}
-              />
-              <span className="switch-slider"></span>
-            </label>
-          </div>
-          <div className="flex items-center">
-            <span className="mr-2 text-sm">Split View</span>
-            <label className="switch">
-              <input
-                type="checkbox"
-                className="switch-input"
-                checked={splitView}
-                onChange={() => setSplitView(!splitView)}
-              />
-              <span className="switch-slider"></span>
-            </label>
-          </div>
+        <div className="text-sm text-white-600">
+          {new Date().toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
         </div>
       </header>
 
       <div className="grid-container mb-6 grid-cols-3">
-        <SysInfo />
-        <HostInfo />
+        <SystemWidget />
         <Containers />
       </div>
 
       <div className="grid-container mb-6">
-        <CpuCard/>
-        <MemoryCard />
+        <CpuWidget/>
+        <MemoryWidget />
         <NetworkCard/>
-        <StorageCard />
+        <StorageWidget />
       </div>
 
       <div className="mb-6">
-        <DisksInfo />
-      </div>
-
-      <div className="mb-6">
-        <SmartData />
-      </div>
-
-      <div className="mb-6">
-        <ContainerList />
+        <SmartWidget />
       </div>
     </div>
   )
