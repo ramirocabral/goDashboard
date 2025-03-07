@@ -1,6 +1,5 @@
 import React from 'react';
 import { Github } from 'lucide-react';
-import { faArchway } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faApple,
@@ -15,9 +14,8 @@ import {
     faWindows,
   } from '@fortawesome/free-brands-svg-icons';
 
-const SysInfo = () => {
+const SystemWidget = () => {
     
-
   const systemInfo = {
     name: "dash.",
     os: "Ubuntu 22.04 LTS",
@@ -96,4 +94,4 @@ function getOsLogo(os){
   return icon;
 }
 
-export default SysInfo;
+export default SystemWidget;

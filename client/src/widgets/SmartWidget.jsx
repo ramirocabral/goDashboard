@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useWebSocket } from "../contexts/WebSocketContext"
 import { RefreshCw, ChevronDown, ChevronUp, AlertTriangle, CheckCircle, AlertCircle } from "lucide-react"
 
-const SmartData = () => {
+const SmartWidget = () => {
   const { smartData, refreshStaticData } = useWebSocket()
   const [isRefreshing, setIsRefreshing] = useState(false)
   const [expandedDisk, setExpandedDisk] = useState(null)
@@ -194,5 +194,5 @@ const SmartData = () => {
   )
 }
 
-export default SmartData
+export default SmartWidget
 

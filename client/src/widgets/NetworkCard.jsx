@@ -35,14 +35,11 @@ const NetworkCard = () => {
     }
   }, [interfaces, selectedInterface])
 
-  // Get current interface data
   const currentInterfaceData = interfaces.find((iface) => iface.interface === selectedInterface) ||
     interfaces[0] || { interface: "N/A", usage: { rx_bytes_ps: 0, tx_bytes_ps: 0 } }
 
-  // Update realtime data when new network data arrives
   useEffect(() => {
     if (networkData && interfaces.length > 0) {
-      console.log("Network data for chart:", networkData)
 
       setRealtimeData((prevData) => {
         const newData = { ...prevData }

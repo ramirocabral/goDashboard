@@ -2,22 +2,18 @@
 
 import { useState, useEffect } from "react"
 import { useWebSocket } from "../contexts/WebSocketContext"
-import { Area, AreaChart, ResponsiveContainer } from "recharts"
-import { Cpu, Info } from "lucide-react"
-// import { CardContainer, CardHeader, Chart, InfoGrid } from "./"
+import { Cpu } from "lucide-react"
 import CardContainer from "../components/cards/CardContainer"
 import CardHeader from "../components/cards/CardHeader"
 import Chart from "../components/cards/Chart"
 import InfoGrid from "../components/cards/InfoGrid"
 
-const CpuCard = () => {
+const CpuWidget = () => {
   const { cpuData } = useWebSocket()
   const [realtimeData, setRealtimeData] = useState([])
 
-  // Update realtime data when new CPU data arrives
   useEffect(() => {
     if (cpuData) {
-      // console.log("nashee")
       setRealtimeData((prev) => {
         const newData = [
           ...prev,
@@ -26,7 +22,7 @@ const CpuCard = () => {
             value: cpuData.usage?.usage_percentage || 0,
           },
         ]
-        // Keep last 50 points
+        //keep last 50 points
         if (newData.length > 50) {
           return newData.slice(-50)
         }
@@ -65,5 +61,5 @@ const CpuCard = () => {
   )
 }
 
-export default CpuCard
+export default CpuWidget
 

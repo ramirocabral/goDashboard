@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Area, AreaChart, ResponsiveContainer } from "recharts"
 import { MemoryStickIcon as Memory } from "lucide-react"
 import { useWebSocket } from "../contexts/WebSocketContext"
 import CardContainer from "../components/cards/CardContainer"
@@ -10,7 +9,7 @@ import Chart from "../components/cards/Chart"
 import InfoGrid from "../components/cards/InfoGrid"
 
 
-const MemoryCard = () => {
+const MemoryWidget = () => {
   const { memoryData } = useWebSocket()
   const [realtimeData, setRealtimeData] = useState([])
 
@@ -76,5 +75,5 @@ const MemoryCard = () => {
   )
 }
 
-export default MemoryCard
+export default MemoryWidget
 
