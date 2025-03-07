@@ -16,10 +16,10 @@ type Host struct{
     Date        string  `json:"date"`
 }
 
-const HOSTNAME_PATH = "/proc/sys/kernel/hostname"
-const OS_PATH = "/etc/os-release"
-const KERNEL_PATH = "/proc/version"
-const LAST_BOOT_PATH = "/proc/stat"
+const HOSTNAME_PATH = "/host/etc/hostname"
+const OS_PATH = "/host/etc/os-release"
+const KERNEL_PATH = "/host/proc/version"
+const DATE_PATH = "/host/proc/stat"
 
 func ReadHost() (Host, error){
     output := Host{}
@@ -41,10 +41,11 @@ func ReadHost() (Host, error){
         return output, errors.New("error reading os data")
     }
 
+    //get each line
     osDataSplit := strings.Split(string(osData), "\n")
 
     for _, line := range osDataSplit{
-        fields := strings.Fields(line)
+        fields := strings.Split(line, "=")
         if len(fields) == 0{
             continue
         }

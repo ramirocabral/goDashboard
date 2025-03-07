@@ -43,6 +43,8 @@ func (d DiskIO) ToPoint() []*core.Point{
     return points
 }
 
+const DISK_STATS_PATH = "/host/proc/diskstats"
+
 
 var lastDiskData = map[string]BytesStore{}
 
@@ -50,7 +52,7 @@ var lastDiskData = map[string]BytesStore{}
 func ReadDiskIO() (DiskIO, error) {
     var disks DiskIO
 
-    data, err := utils.ReadFile("/proc/diskstats")
+    data, err := utils.ReadFile(DISK_STATS_PATH)
 
     if err != nil {
         logger.GetLogger().Error("Error reading disk stats: ", err)

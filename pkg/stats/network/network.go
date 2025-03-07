@@ -4,8 +4,8 @@ import (
 	"log"
 	"strings"
 
-	"golang-system-monitor/internal/utils"
 	"golang-system-monitor/internal/core"
+	"golang-system-monitor/internal/utils"
 )
 
 type Networks []Network
@@ -50,26 +50,26 @@ var lastNetworkData = map[string]ByteStore{}
 func ReadNetworks() (Networks, error){
     output := Networks{}
 
-    command := "ip -o addr show scope global | awk '{split($4, a, \"/\"); print $2\" : \"a[1]}'"
+    // command := "ip -o addr show scope global | awk '{split($4, a, \"/\"); print $2\" : \"a[1]}'"
+    command := "ls /host/sys/class/net"
 
     data, err := utils.ExecuteCommandWithPipe(command)
     if err != nil{
         return output, err
     }
 
-    dataSplit := strings.Split(string(data), "\n")
+    ifaces := strings.Fields(string(data))
 
-    for _, iface := range dataSplit{
+    for _, iface := range ifaces{
 
-        if strings.HasPrefix(iface, "lo") || strings.HasPrefix(iface, "docker") || strings.HasPrefix(iface, "br") || iface == ""{
+        if strings.HasPrefix(iface, "lo") || strings.HasPrefix(iface, "docker") || strings.HasPrefix(iface, "br") || iface == "" || strings.HasPrefix(iface, "veth") {
             continue
         }
 
         net := Network{}
 
         //get the interface name an ip addr
-        ifaceSplit := strings.Split(iface, " : ")
-        net.Interface = ifaceSplit[0]
+        net.Interface = iface
 
         //get the rw bytes per second
         bytes := getNetworkBytes(net.Interface)
@@ -100,17 +100,31 @@ func ReadNetworks() (Networks, error){
 
 //return the bytes of the actual iteration
 func getNetworkBytes(interfaceName string) ByteStore{
+
     output := ByteStore{}
 
-    command := "cat /proc/net/dev | grep " + interfaceName + " | awk '{print $1\" \"$2\" \"$10}'"
-    data, err := utils.ExecuteCommandWithPipe(command)
+    command1 := "cat /host/sys/class/net/" + interfaceName + "/statistics/rx_bytes"
+    command2 := "cat /host/sys/class/net/" + interfaceName + "/statistics/tx_bytes"
+
+    data, err := utils.ExecuteCommandWithPipe(command1)
     if err != nil{
         log.Println(err)
     }
 
-    dataSplit := strings.Fields(string(data))
-    output.RxBytes = utils.StrToUint64(dataSplit[1])
-    output.TxBytes = utils.StrToUint64(dataSplit[2])
+    data = utils.TrimNewLine(data)
+    output.RxBytes = utils.StrToUint64(string(data))
+
+    data, err = utils.ExecuteCommandWithPipe(command2)
+    if err != nil{
+        log.Println(err)
+    }
+
+    data = utils.TrimNewLine(data)
+    output.TxBytes = utils.StrToUint64(string(data))
+
+    // dataSplit := strings.Fields(string(data))
+    // output.RxBytes = utils.StrToUint64(dataSplit[1])
+    // output.TxBytes = utils.StrToUint64(dataSplit[2])
 
     return output
 }

@@ -27,3 +27,7 @@ func StrToFloat64(s string) float64{
 func Uint64ToStr(i uint64) string{
     return strconv.FormatUint(i, 10)
 }
+
+func TrimNewLine(s string) string{
+    return s[:len(s)-1]
+}

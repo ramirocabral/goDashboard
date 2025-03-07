@@ -39,7 +39,7 @@ func (m Memory) ToPoint() []*core.Point{
     }
 }
 
-const MEMORY_PATH = "/proc/meminfo"
+const MEMORY_PATH = "/host/proc/meminfo"
 
 func ReadMemory() (Memory, error){
     output := Memory{}

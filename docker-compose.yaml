@@ -2,7 +2,7 @@
 services:
   api:
     container_name: go-api
-    pid: host
+    # pid: host
     build:
       context: .
       dockerfile: Dockerfile
@@ -11,10 +11,12 @@ services:
     environment:
       - DOCKER_API_VERSION=1.47
       - DB_ADDR="http://influxdb2:8086"
-      - HOSTNAME=${HOST}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - /etc/os-release:/etc/os-release
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /etc/os-release:/host/etc/os-release:ro
+      - /etc/hostname:/host/etc/hostname:ro
     depends_on:
       - influxdb2
     privileged: true

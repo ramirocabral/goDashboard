@@ -26,7 +26,7 @@ func (u Uptime) ToPoint() []*core.Point{
 	}
 }
 
-const UPTIME_PATH = "/proc/uptime"
+const UPTIME_PATH = "/host/proc/uptime"
 
 func ReadUptime() (Uptime, error){
     output := Uptime{}
