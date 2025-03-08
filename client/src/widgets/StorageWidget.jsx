@@ -20,8 +20,8 @@ const StorageCard = () => {
     }
   }, [disks, selectedDisk])
 
-  const calculateStrokeDasharray = (percentage) => {
-    const circumference = 2 * Math.PI * 40
+  const calculateStrokeDasharray = (percentage, radius) => {
+    const circumference = 2 * Math.PI * radius
     const dashArray = (percentage / 100) * circumference
     return `${dashArray} ${circumference}`
   }
@@ -100,7 +100,7 @@ const StorageCard = () => {
           ]} />
 
           <div className="relative h-48 w-48 -mt-5 -mb-6 mx-auto">
-            <svg className="h-full w-full -rotate-90 transform">
+            <svg className="h-full w-full -rotate-90 ">
               <circle
                 cx="96"
                 cy="96"
@@ -120,7 +120,7 @@ const StorageCard = () => {
                 fill="none"
                 className="text-emerald-500"
                 strokeLinecap="round"
-                strokeDasharray={calculateStrokeDasharray(selectedDisk.used_percentage)}
+                strokeDasharray={calculateStrokeDasharray(selectedDisk.used_percentage, 50)}
               />
             </svg>
             {/* Center text */}

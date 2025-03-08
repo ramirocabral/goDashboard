@@ -35,7 +35,7 @@ const SystemWidget = () => {
 
       <div className="relative flex flex-col items-center justify-center p-10 overflow-visible">
         <div className="absolute w-64 h-64 bg-gray-800/40 rounded-full flex items-center justify-center">
-          <FontAwesomeIcon icon={getOsLogo(sysInfo.os)} className="w-48 h-48 opacity-15" />
+          <FontAwesomeIcon icon={getOsLogo( sysInfo.os.toLowerCase() )} className="w-48 h-48 opacity-15" />
         </div>
          
 
