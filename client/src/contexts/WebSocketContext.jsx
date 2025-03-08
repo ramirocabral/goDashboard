@@ -2,10 +2,9 @@
 
 import { createContext, useContext, useState, useEffect, useCallback } from "react"
 
-// Create context
 const WebSocketContext = createContext(null)
 
-const BASE_URL="http://localhost:8080/api/v1"
+const BASE_URL="http://nas.local:8080/api/v1"
 
 // WebSocket endpoints
 const WS_ENDPOINTS = {
@@ -186,7 +185,6 @@ export const WebSocketProvider = ({ children }) => {
     return () => clearInterval(interval)
   }, [])
 
-  // Function to fetch historical data
   const fetchHistoricalData = async (dataType, startTime, endTime, interval) => {
     try {
       const response = await fetch(

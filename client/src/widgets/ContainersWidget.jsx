@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { useWebSocket } from "../contexts/WebSocketContext"
 import CardContainer from "../components/widgets/WidgetContainer"
-import { Box, Play, Pause, RotateCcw, Search, ChevronDown, ChevronUp } from "lucide-react"
+import { Box, Search, ChevronDown, ChevronUp } from "lucide-react"
 const Containers = () => {
   const { containerData } = useWebSocket()
   const [filter, setFilter] = useState("")
@@ -42,22 +42,8 @@ const Containers = () => {
     }
   }
 
-  const getStatusBgColor = (status) => {
-    switch (status.toLowerCase()) {
-      case "running":
-        return "bg-green-500/20"
-      case "paused":
-        return "bg-yellow-500/20"
-      case "stopped":
-        return "bg-red-500/20"
-      default:
-        return "bg-gray-500/20"
-    }
-  }
-
   return (
     <CardContainer>
-      {/* Icon and Title */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center space-x-3">
           <div className="rounded-lg bg-cyan-500/10 p-2">
@@ -94,7 +80,7 @@ const Containers = () => {
         </div>
       </div>
 
-      {/*if the data has not been loaded, display a loading screen */}
+      {/* loading screen  */}
       {!containerData ? (
         <div className="flex h-40 items-center justify-center">
           <div className="text-center text-gray-400">

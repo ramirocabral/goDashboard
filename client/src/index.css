@@ -28,7 +28,7 @@
 
 @layer components {
   .card {
-   @apply relative rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-4 shadow-lg transition-all hover:shadow-xl min-h-[330px];
+    @apply relative rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-4 shadow-lg transition-all hover:shadow-xl min-h-[330px];
   }
 
   .card-header {
@@ -59,11 +59,11 @@
     @apply absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-secondary rounded-full transition-all duration-300 before:absolute before:h-3.5 before:w-3.5 before:left-1 before:bottom-[3px] before:bg-foreground before:rounded-full before:transition-all before:duration-300;
   }
 
-  .switch-input:checked + .switch-slider {
+  .switch-input:checked+.switch-slider {
     @apply bg-primary;
   }
 
-  .switch-input:checked + .switch-slider:before {
+  .switch-input:checked+.switch-slider:before {
     @apply translate-x-5 bg-primary-foreground;
   }
 }

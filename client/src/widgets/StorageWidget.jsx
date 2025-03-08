@@ -2,17 +2,16 @@
 
 import { useState, useEffect } from "react"
 import { useWebSocket } from "../contexts/WebSocketContext"
-import { HardDrive, ChevronDown, ChevronUp } from "lucide-react"
+import { HardDrive} from "lucide-react"
 import CardContainer from "../components/widgets/WidgetContainer"
 import WidgetGrid from "../components/widgets/WidgetGrid"
+import WidgetHeaderSelector from "../components/widgets/WidgetHeaderSelector"
 
-const StorageCard = () => {
+const StorageWidget = () => {
   const { disksInfo } = useWebSocket()
   const [selectedDisk, setSelectedDisk] = useState(null)
-  const [showDiskSelector, setShowDiskSelector] = useState(false)
 
-  const disks = disksInfo?.disks || [
-  ]
+  const disks = disksInfo?.disks || []
 
   useEffect(() => {
     if (!selectedDisk && disks.length > 0) {
@@ -33,62 +32,28 @@ const StorageCard = () => {
     return `${gb.toFixed(1)} GB`
   }
 
+  //we need this shit because of the json response format
+  const handleDiskSelect = (device) => {
+    setSelectedDisk(disks.find((disk) => disk.device === device))
+  }
+
   return (
     <CardContainer>
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
+
+      <WidgetHeaderSelector
+        icon={
           <div className="rounded-lg bg-emerald-500/10 p-2">
             <HardDrive className="h-5 w-5 text-emerald-500" />
           </div>
-          <div>
-            <h3 className="text-sm font-medium text-gray-200">Storage</h3>
-            <div className="relative">
-              <button
-                onClick={() => setShowDiskSelector(!showDiskSelector)}
-                className="flex items-center text-xs text-gray-400 hover:text-gray-300"
-              >
-                {selectedDisk?.device || "Select Disk"}
-                {disks.length > 1 &&
-                  (showDiskSelector ? (
-                    <ChevronUp className="ml-1 h-3 w-3" />
-                  ) : (
-                    <ChevronDown className="ml-1 h-3 w-3" />
-                  ))}
-              </button>
-
-              {showDiskSelector && disks.length > 1 && (
-                <div className="absolute top-full left-0 z-10 mt-1 w-40 rounded-md bg-gray-800 shadow-lg">
-                  <ul className="py-1">
-                    {disks.map((disk) => (
-                      <li key={disk.device}>
-                        <button
-                          className={`block w-full px-4 py-2 text-left text-xs ${
-                            disk.device === selectedDisk?.device
-                              ? "bg-gray-700 text-gray-200"
-                              : "text-gray-400 hover:bg-gray-700 hover:text-gray-200"
-                          }`}
-                          onClick={() => {
-                            setSelectedDisk(disk)
-                            setShowDiskSelector(false)
-                          }}
-                        >
-                          {disk.device}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-        {selectedDisk && (
-          <div className="text-right">
-            <p className="text-2xl font-bold text-gray-200">{selectedDisk.used_percentage}%</p>
-            <p className="text-xs text-gray-400">{formatGB(selectedDisk.gb_used)} / {formatGB(selectedDisk.gb_size)}</p>
-          </div>
-        )}
-      </div>
+        }
+        title="Storage"
+        items={disks.map((disk) => disk.device)}
+        selectedItem={selectedDisk?.device}
+        onItemSelect={handleDiskSelect}
+        valueText={selectedDisk? `${selectedDisk?.used_percentage}%`: "0%"}
+        // valueSubtext={selectedDisk? `${formatGB(selectedDisk?.gb_used)} / ${formatGB(selectedDisk?.gb_size)}` : "0 GB"}
+        valueSubtext={"Used Space"}
+      />
 
       {selectedDisk && (
         <div className="flex flex-col justify-center">
@@ -110,7 +75,7 @@ const StorageCard = () => {
                 fill="none"
                 className="text-gray-700"
               />
-              {/* Progress circle */}
+              
               <circle
                 cx="96"
                 cy="96"
@@ -135,4 +100,4 @@ const StorageCard = () => {
   )
 }
 
-export default StorageCard
+export default StorageWidget

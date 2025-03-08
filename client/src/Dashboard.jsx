@@ -19,7 +19,7 @@ const Dashboard = () => {
     <div className="container mx-auto p-4">
       <header className="flex justify-between items-center mb-6">
         <div className="flex items-center">
-          <h1 className="text-3xl font-bold">goMonitor</h1>
+          <h1 className="text-3xl font-bold">goDashboard</h1>
           <div
             className={`ml-4 flex items-center ${
               isConnected ? "text-green-500" : "text-red-500"

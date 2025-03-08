@@ -7,14 +7,13 @@ import { Network, ChevronDown, ChevronUp } from "lucide-react"
 import CardContainer from "../components/widgets/WidgetContainer"
 import Chart from "../components/widgets/WidgetChart"
 import WidgetGrid from "../components/widgets/WidgetGrid"
+import WidgetHeaderSelector from "../components/widgets/WidgetHeaderSelector"
 
 const NetworkWidget = () => {
   const { networkData } = useWebSocket()
   const [realtimeData, setRealtimeData] = useState({})
   const [selectedInterface, setSelectedInterface] = useState(null)
-  const [showInterfaceSelector, setShowInterfaceSelector] = useState(false)
 
-  // Format bytes to human-readable format
   const formatBytes = (bytes, decimals = 2) => {
     if (!bytes) return "0 B"
     const k = 1024
@@ -24,10 +23,8 @@ const NetworkWidget = () => {
     return `${Number.parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
   }
 
-  // Get available interfaces
   const interfaces = networkData || []
 
-  // Set default selected interface if not set
   useEffect(() => {
     if (interfaces.length > 0 && !selectedInterface) {
       setSelectedInterface(interfaces[0].interface)
@@ -48,12 +45,10 @@ const NetworkWidget = () => {
           const downloadRate = iface.usage?.rx_bytes_ps || 0
           const uploadRate = iface.usage?.tx_bytes_ps || 0
 
-          // Initialize array if it doesn't exist
           if (!newData[interfaceName]) {
             newData[interfaceName] = []
           }
 
-          // Add new data point
           const timestamp = Date.now()
           newData[interfaceName] = [
             ...newData[interfaceName],
@@ -64,7 +59,6 @@ const NetworkWidget = () => {
             },
           ]
 
-          // Keep only the last 30 points to make the graph smoother
           if (newData[interfaceName].length > 30) {
             newData[interfaceName] = newData[interfaceName].slice(-30)
           }
@@ -75,10 +69,8 @@ const NetworkWidget = () => {
     }
   }, [networkData, interfaces])
 
-  // Get data for the selected interface
   const selectedInterfaceData = realtimeData[selectedInterface] || []
 
-  // Prepare data for InfoGrid component
   const networkInfoData = [
     {
       label: "Download",
@@ -90,7 +82,6 @@ const NetworkWidget = () => {
     },
   ]
 
-  // Add interface count info if there are multiple interfaces
   if (interfaces.length > 1) {
     networkInfoData.push(
       { label: "Interfaces", value: interfaces.length.toString() },
@@ -100,68 +91,23 @@ const NetworkWidget = () => {
 
   return (
     <CardContainer>
-      {/* Custom header to avoid nesting issues */}
-      <div className="mb-4 flex items-center justify-between">
-        <div className="flex items-center space-x-3">
-          <div className="rounded-lg bg-yellow-500/10 p-2">
-            <Network className="h-5 w-5 text-yellow-500" />
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-gray-200">Network</h3>
-            {/* Interface selector as a sibling, not a child of p */}
-            <div className="relative">
-              <button
-                onClick={() => setShowInterfaceSelector(!showInterfaceSelector)}
-                className="flex items-center text-xs text-gray-400 hover:text-gray-300"
-              >
-                {currentInterfaceData?.interface}
-                {interfaces.length > 1 &&
-                  (showInterfaceSelector ? (
-                    <ChevronUp className="ml-1 h-3 w-3" />
-                  ) : (
-                    <ChevronDown className="ml-1 h-3 w-3" />
-                  ))}
-              </button>
 
-              {/* Interface selector dropdown */}
-              {showInterfaceSelector && interfaces.length > 1 && (
-                <div className="absolute top-full left-0 z-10 mt-1 w-40 rounded-md bg-gray-800 shadow-lg">
-                  <ul className="py-1">
-                    {interfaces.map((iface) => (
-                      <li key={iface.interface}>
-                        <button
-                          className={`block w-full px-4 py-2 text-left text-xs ${
-                            iface.interface === selectedInterface
-                              ? "bg-gray-700 text-gray-200"
-                              : "text-gray-400 hover:bg-gray-700 hover:text-gray-200"
-                          }`}
-                          onClick={() => {
-                            setSelectedInterface(iface.interface)
-                            setShowInterfaceSelector(false)
-                          }}
-                        >
-                          {iface.interface}
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </div>
+      <WidgetHeaderSelector
+        icon={
+        <div className="rounded-lg bg-yellow-500/10 p-2">
+          <Network className="h-5 w-5 text-yellow-500" />
         </div>
-        <div className="text-right">
-          <p className="text-2xl font-bold text-gray-200">
-            {formatBytes(currentInterfaceData.usage?.rx_bytes_ps || 0)}/s
-          </p>
-          <p className="text-xs text-gray-400">Current Download</p>
-        </div>
-      </div>
+        }
+        title="Network"
+        items={interfaces.map((iface) => iface.interface)}
+        selectedItem={currentInterfaceData.interface}
+        onItemSelect={setSelectedInterface}
+        valueText={formatBytes(currentInterfaceData.usage?.rx_bytes_ps || 0) + "/s"}
+        valueSubtext="Current Download"
+      />
 
-      {/* Network Stats */}
       <WidgetGrid data={networkInfoData} />
 
-      {/* Single chart for network data */}
       <div className="h-32">
         <Chart
           realTimeData={selectedInterfaceData}
