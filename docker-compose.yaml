@@ -1,15 +1,13 @@
-#docker compose for influxdb2 server
 services:
   api:
     container_name: go-api
-    # pid: host
     build:
       context: .
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
     environment:
-      - DOCKER_API_VERSION=1.47
+      - DOCKER_API_VERSION=1.41
       - DB_ADDR="http://influxdb2:8086"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
