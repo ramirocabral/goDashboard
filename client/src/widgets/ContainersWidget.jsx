@@ -103,7 +103,7 @@ const Containers = () => {
           </div>
         </div>
       ) : (
-        <div className="overflow-hidden">
+        <div className="overflow-x-auto">
           {filteredContainers.length === 0 ? (
             <div className="py-4 text-center text-gray-400">
               No containers found

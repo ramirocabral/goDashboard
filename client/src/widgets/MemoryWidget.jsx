@@ -6,7 +6,7 @@ import { useWebSocket } from "../contexts/WebSocketContext"
 import CardContainer from "../components/widgets/WidgetContainer"
 import CardHeader from "../components/widgets/WidgetHeader"
 import Chart from "../components/widgets/WidgetChart"
-import InfoGrid from "../components/widgets/WidgetGrid"
+import WidgetGrid from "../components/widgets/WidgetGrid"
 
 
 const MemoryWidget = () => {
@@ -54,7 +54,7 @@ const MemoryWidget = () => {
         value={(((memoryData?.used / memoryData?.total) * 100)?.toFixed(1) || "0.0") + "%"}
         secondValue={`${formatBytes(memoryData?.used)} / ${formatBytes(memoryData?.total)}`} 
       />
-      <InfoGrid
+      <WidgetGrid
         data={[
           { label: "Active", value: formatBytes(memoryData?.active) },
           { label: "Inactive", value: formatBytes(memoryData?.inactive) },

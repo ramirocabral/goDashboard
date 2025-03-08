@@ -6,7 +6,7 @@ import { Area, AreaChart, ResponsiveContainer } from "recharts"
 import { Network, ChevronDown, ChevronUp } from "lucide-react"
 import CardContainer from "../components/widgets/WidgetContainer"
 import Chart from "../components/widgets/WidgetChart"
-import InfoGrid from "../components/widgets/WidgetGrid"
+import WidgetGrid from "../components/widgets/WidgetGrid"
 
 const NetworkWidget = () => {
   const { networkData } = useWebSocket()
@@ -159,7 +159,7 @@ const NetworkWidget = () => {
       </div>
 
       {/* Network Stats */}
-      <InfoGrid data={networkInfoData} />
+      <WidgetGrid data={networkInfoData} />
 
       {/* Single chart for network data */}
       <div className="h-32">

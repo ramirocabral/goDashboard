@@ -28,7 +28,7 @@
 
 @layer components {
   .card {
-   @apply relative overflow-hidden rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-4 shadow-lg transition-all hover:shadow-xl
+   @apply relative rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-4 shadow-lg transition-all hover:shadow-xl min-h-[330px];
   }
 
   .card-header {

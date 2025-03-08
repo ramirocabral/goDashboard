@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { useWebSocket } from "../contexts/WebSocketContext"
 import { HardDrive, ChevronDown, ChevronUp } from "lucide-react"
 import CardContainer from "../components/widgets/WidgetContainer"
-import InfoGrid from "../components/widgets/WidgetGrid"
+import WidgetGrid from "../components/widgets/WidgetGrid"
 
 const StorageCard = () => {
   const { disksInfo } = useWebSocket()
@@ -92,7 +92,7 @@ const StorageCard = () => {
 
       {selectedDisk && (
         <div className="flex flex-col justify-center">
-          <InfoGrid data={[
+          <WidgetGrid data={[
             { label: "Type", value: selectedDisk.type },
             { label: "Mount Point", value: selectedDisk.mount_point },
             { label: "Used Space", value: formatGB(selectedDisk.gb_used) },

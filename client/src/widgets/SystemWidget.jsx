@@ -21,7 +21,7 @@ const SystemWidget = () => {
   const sysInfo = systemInfo
 
   return (
-    <div className="shadow-sm border border-border bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-8">
+    <div className="shadow-sm border border-border bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-8 h-full">
       <div className="flex flex-col">
         <div className="flex justify-between items-center">
           <a href="https://www.github.com/ramirocabral/golang-system-monitor" target='_blank' className="text-white text-sm flex items-center">

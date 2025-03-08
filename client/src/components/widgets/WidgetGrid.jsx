@@ -1,6 +1,6 @@
 "use client"
 
-const InfoGrid = ({ data }) => (
+const WidgetGrid = ({ data }) => (
     <div className="mb-4 grid grid-cols-2 gap-4">
       {data.map(({ label, value }, index) => (
         <div key={index}>
@@ -11,4 +11,4 @@ const InfoGrid = ({ data }) => (
     </div>
 );
 
-export default InfoGrid;
+export default WidgetGrid;

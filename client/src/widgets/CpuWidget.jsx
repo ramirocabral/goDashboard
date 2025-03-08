@@ -6,7 +6,7 @@ import { Cpu } from "lucide-react"
 import CardContainer from "../components/widgets/WidgetContainer"
 import CardHeader from "../components/widgets/WidgetHeader"
 import Chart from "../components/widgets/WidgetChart"
-import InfoGrid from "../components/widgets/WidgetGrid"
+import WidgetGrid from "../components/widgets/WidgetGrid"
 
 const CpuWidget = () => {
   const { cpuData } = useWebSocket()
@@ -40,7 +40,7 @@ const CpuWidget = () => {
         value={(cpuData?.usage?.usage_percentage?.toFixed(1) || "0.0") + "%"}
         secondValue={(cpuData?.temp || "NULL") + "°C"}
       />
-      <InfoGrid
+      <WidgetGrid
         data={[
           { label: "Frequency", value: cpuData?.frequency || "2.6" + " GHz" },
           { label: "Family", value: cpuData?.family || "x64" },
