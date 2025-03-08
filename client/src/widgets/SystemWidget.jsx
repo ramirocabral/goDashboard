@@ -23,9 +23,10 @@ const SystemWidget = () => {
   return (
     <div className="shadow-sm border border-border bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl p-8">
       <div className="flex flex-col">
-        {/* Top section with GitHub icon */}
         <div className="flex justify-between items-center">
-          <Github className="text-white h-5 w-5" />
+          <a href="https://www.github.com/ramirocabral/golang-system-monitor" target='_blank' className="text-white text-sm flex items-center">
+            <Github className="h-5 w-5 mr-2" />
+          </a>
         </div>
 
       {!sysInfo ? (
