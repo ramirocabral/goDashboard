@@ -5,21 +5,23 @@ import { createContext, useContext, useState, useEffect, useCallback } from "rea
 // Create context
 const WebSocketContext = createContext(null)
 
+const BASE_URL="http://localhost:8080/api/v1"
+
 // WebSocket endpoints
 const WS_ENDPOINTS = {
-  CPU: "ws://localhost:8080/api/v1/ws/cpu",
-  MEMORY: "ws://localhost:8080/api/v1/ws/memory",
-  NETWORK: "ws://localhost:8080/api/v1/ws/network",
-  CONTAINER: "ws://localhost:8080/api/v1/ws/container",
-  UPTIME: "ws://localhost:8080/api/v1/ws/uptime",
-  IO: "ws://localhost:8080/api/v1/ws/io",
+  CPU: `${BASE_URL}/ws/cpu`,
+  MEMORY: `${BASE_URL}/ws/memory`,
+  NETWORK: `${BASE_URL}/ws/network`,
+  CONTAINER: `${BASE_URL}/ws/container`,
+  UPTIME: `${BASE_URL}/ws/uptime`,
+  IO: `${BASE_URL}/ws/io`,
 }
 
 // REST API endpoints
 const API_ENDPOINTS = {
-  SYSTEM_INFO: "http://localhost:8080/api/v1/stat/host",
-  DISKS: "http://localhost:8080/api/v1/stat/disk",
-  SMART: "http://localhost:8080/api/v1/stat/smart",
+  SYSTEM_INFO: `${BASE_URL}/stat/host`,
+  DISKS: `${BASE_URL}/stat/disk`,
+  SMART: `${BASE_URL}/stat/smart`,
 }
 
 export const WebSocketProvider = ({ children }) => {
@@ -104,7 +106,7 @@ export const WebSocketProvider = ({ children }) => {
     return socket
   }, [])
 
-  // Create WebSocket connections on component mount
+  // create WebSocket connections on component mount
   useEffect(() => {
     const sockets = {
       cpu: createWebSocket(WS_ENDPOINTS.CPU, "CPU"),
@@ -115,7 +117,7 @@ export const WebSocketProvider = ({ children }) => {
       io: createWebSocket(WS_ENDPOINTS.IO, "IO"),
     }
 
-    // Clean up WebSocket connections on unmount
+    // clean up WebSocket connections on unmount
     return () => {
       Object.values(sockets).forEach((socket) => {
         if (socket && socket.readyState === WebSocket.OPEN) {
@@ -125,7 +127,7 @@ export const WebSocketProvider = ({ children }) => {
     }
   }, [createWebSocket])
 
-  // Fetch system info, disks info, and SMART data on component mount
+  // fetch system info, disks info, and SMART data
   useEffect(() => {
     const fetchSystemInfo = async () => {
       try {
@@ -160,6 +162,7 @@ export const WebSocketProvider = ({ children }) => {
           throw new Error(`HTTP error! status: ${response.status}`)
         }
         const data = await response.json()
+        // console.log(smartData.devices[0].device)
         setSmartData(data)
       } catch (error) {
         console.error("Error fetching SMART data:", error)
@@ -187,7 +190,7 @@ export const WebSocketProvider = ({ children }) => {
   const fetchHistoricalData = async (dataType, startTime, endTime, interval) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/${dataType}/history?start=${startTime}&end=${endTime}&interval=${interval}`,
+        `${BASE_URL}/api/${dataType}/history?start=${startTime}&end=${endTime}&interval=${interval}`,
       )
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -197,37 +200,6 @@ export const WebSocketProvider = ({ children }) => {
     } catch (error) {
       console.error(`Error fetching ${dataType} historical data:`, error)
       return null
-    }
-  }
-
-  // Function to refresh static data
-  const refreshStaticData = async () => {
-    try {
-      const [systemResponse, disksResponse, smartResponse] = await Promise.all([
-        fetch(API_ENDPOINTS.SYSTEM_INFO),
-        fetch(API_ENDPOINTS.DISKS),
-        fetch(API_ENDPOINTS.SMART),
-      ])
-
-      if (systemResponse.ok) {
-        const hostData = await systemResponse.json()
-        setSystemInfo(hostData)
-      }
-
-      if (disksResponse.ok) {
-        const disksData = await disksResponse.json()
-        setDisksInfo(disksData)
-      }
-
-      if (smartResponse.ok) {
-        const smartData = await smartResponse.json()
-        setSmartData(smartData)
-      }
-
-      return true
-    } catch (error) {
-      console.error("Error refreshing static data:", error)
-      return false
     }
   }
 
@@ -245,7 +217,6 @@ export const WebSocketProvider = ({ children }) => {
         smartData,
         connected,
         fetchHistoricalData,
-        refreshStaticData,
       }}
     >
       {children}

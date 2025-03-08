@@ -18,11 +18,6 @@ const Containers = () => {
         container.id.toLowerCase().includes(filter.toLowerCase()),
     ) || []
 
-  const formatTimestamp = (timestamp) => {
-    const date = new Date(timestamp * 1000)
-    return date.toLocaleString()
-  }
-
   const getTimeElapsed = (timestamp) => {
     const created = new Date(timestamp * 1000)
     const now = new Date()
