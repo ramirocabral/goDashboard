@@ -51,8 +51,7 @@ const StorageWidget = () => {
         selectedItem={selectedDisk?.device}
         onItemSelect={handleDiskSelect}
         valueText={selectedDisk? `${selectedDisk?.used_percentage}%`: "0%"}
-        // valueSubtext={selectedDisk? `${formatGB(selectedDisk?.gb_used)} / ${formatGB(selectedDisk?.gb_size)}` : "0 GB"}
-        valueSubtext={"Used Space"}
+        valueSubtext={selectedDisk? `${formatGB(selectedDisk?.gb_used)} / ${formatGB(selectedDisk?.gb_size)}` : "0 GB"}
       />
 
       {selectedDisk && (
