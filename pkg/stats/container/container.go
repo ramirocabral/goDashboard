@@ -14,8 +14,10 @@ import (
 type Containers []Container     
 
 type Container struct{
+    ID      string  `json:"id"`
     Name    string  `json:"name"`
     Status  string  `json:"status"`
+    Created int64   `json:"created"`
     Uptime  string  `json:"uptime"`
     Image   string  `json:"image"`  
 }
@@ -29,8 +31,10 @@ func (c Containers) ToPoint() []*core.Point{
             Measurement: "container",
             Tags: map[string]string{},
             Fields: map[string]interface{}{
+                "id": container.ID,
                 "name": container.Name,
                 "status": container.Status,
+                "created": container.Created,
                 "uptime": container.Uptime,
                 "image": container.Image,
             },
@@ -57,9 +61,11 @@ func ReadContainers() (Containers, error){
 
     for _, container := range containers{
         output = append(output, Container{
+            ID: container.ID,
             Name: container.Names[0],
-            Status: container.Status,
-            Uptime: container.State,
+            Status: container.State,
+            Created: container.Created,
+            Uptime: container.Status,
             Image: container.Image,
         })
     }

@@ -29,9 +29,13 @@ const Dashboard = () => {
         </div>
       </header>
 
-      <div className="grid-container mb-6 grid-cols-3">
-        <SystemWidget />
-        <Containers />
+      <div className="grid-container mb-6 grid-cols-2">
+        <div className="align-self-start">
+          <SystemWidget />
+        </div>
+        {/* <div className="col-span-2"> */}
+          <Containers/>
+        {/* </div> */}
       </div>
 
       <div className="grid-container mb-6">

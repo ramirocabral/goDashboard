@@ -4,11 +4,11 @@ import { useState } from "react"
 import { useWebSocket } from "../contexts/WebSocketContext"
 import CardContainer from "../components/cards/CardContainer"
 import { Box, Play, Pause, RotateCcw, Search, ChevronDown, ChevronUp } from "lucide-react"
-
 const Containers = () => {
   const { containerData } = useWebSocket()
   const [filter, setFilter] = useState("")
   const [expanded, setExpanded] = useState(false)
+
 
   const filteredContainers =
     containerData?.filter(
@@ -18,20 +18,20 @@ const Containers = () => {
         container.id.toLowerCase().includes(filter.toLowerCase()),
     ) || []
 
-  const formatUptime = (seconds) => {
-    if (!seconds) return "N/A"
+  const formatTimestamp = (timestamp) => {
+    const date = new Date(timestamp * 1000)
+    return date.toLocaleString()
+  }
 
-    const days = Math.floor(seconds / 86400)
-    const hours = Math.floor((seconds % 86400) / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
-
-    if (days > 0) {
-      return `${days}d ${hours}h`
-    } else if (hours > 0) {
-      return `${hours}h ${minutes}m`
-    } else {
-      return `${minutes}m`
-    }
+  const getTimeElapsed = (timestamp) => {
+    const created = new Date(timestamp * 1000)
+    const now = new Date()
+    const diffMs = now.getTime() - created.getTime()
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+    const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    if (diffDays > 0) return `${diffDays}d ${diffHours}h ago`
+    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
+    return `${diffHours}h ${diffMinutes}m ago`
   }
 
   const getStatusColor = (status) => {
@@ -99,6 +99,7 @@ const Containers = () => {
         </div>
       </div>
 
+      {/*if the data has not been loaded, display a loading screen */}
       {!containerData ? (
         <div className="flex h-40 items-center justify-center">
           <div className="text-center text-gray-400">
@@ -114,66 +115,32 @@ const Containers = () => {
             </div>
           ) : (
             <div className="space-y-2">
-              {filteredContainers
-                .slice(0, expanded ? filteredContainers.length : 3)
-                .map((container) => (
-                  <div
-                    key={container.id}
-                    className="flex items-center justify-between rounded-md bg-gray-800/50 p-2 hover:bg-gray-800"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <div
-                        className={`h-2 w-2 rounded-full ${
-                          container.status.toLowerCase() === "running"
-                            ? "bg-green-500"
-                            : container.status.toLowerCase() === "paused"
-                            ? "bg-yellow-500"
-                            : "bg-red-500"
-                        }`}
-                      ></div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-200">
-                          {container.name}
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          {container.image}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-3">
-                      <div className="text-right">
-                        <p className="text-xs text-gray-400">
-                          CPU: {container.cpu_usage}%
-                        </p>
-                        <p className="text-xs text-gray-400">
-                          MEM: {container.memory_usage} MB
-                        </p>
-                      </div>
-                      <div
-                        className={`rounded-md px-2 py-1 text-xs ${getStatusBgColor(
-                          container.status
-                        )} ${getStatusColor(container.status)}`}
-                      >
-                        {container.status}
-                      </div>
-                      <div className="flex space-x-1">
-                        {container.status.toLowerCase() !== "running" ? (
-                          <button className="rounded-md p-1 text-green-500 hover:bg-gray-700">
-                            <Play className="h-3 w-3" />
-                          </button>
-                        ) : (
-                          <button className="rounded-md p-1 text-yellow-500 hover:bg-gray-700">
-                            <Pause className="h-3 w-3" />
-                          </button>
-                        )}
-                        <button className="rounded-md p-1 text-blue-500 hover:bg-gray-700">
-                          <RotateCcw className="h-3 w-3" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+              <table className="w-full text-sm text-left text-gray-400">
+                <thead className="bg-gray-700 text-gray-300">
+                  <tr>
+                    <th className="p-2">Name</th>
+                    <th className="p-2">ID</th>
+                    <th className="p-2">Status</th>
+                    <th className="p-2">Image</th>
+                    <th className="p-2">Created</th>
+                    <th className="p-2">Uptime</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {filteredContainers
+                  .slice(0, expanded ? filteredContainers.length : 3)
+                  .map((container) => (
+                  <tr key={container.id} className="border-b border-gray-600 bg-gray-800/50">
+                    <td className="p-2 font-medium text-gray-200">{container.name}</td>
+                    <td className="p-2 font-mono">{container.id.substring(0, 12)}</td>
+                    <td className={`p-2 font-medium ${getStatusColor(container.status)}`}>{container.status}</td>
+                    <td className="p-2 text-gray-300">{container.image}</td>
+                    <td className="p-2 text-gray-300">{getTimeElapsed(container.created)}</td>
+                    <td className="p-2 text-gray-300">{container.uptime}</td>
+                  </tr>
                 ))}
-
+                </tbody>
+              </table>
               {filteredContainers.length > 3 && !expanded && (
                 <button
                   className="mt-2 w-full rounded-md bg-gray-800 py-1 text-xs text-gray-400 hover:bg-gray-700"
