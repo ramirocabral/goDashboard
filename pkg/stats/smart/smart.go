@@ -2,12 +2,11 @@ package smart
 
 import (
 	// "fmt"
-	"log"
 	"regexp"
 	"strings"
 
+	"golang-system-monitor/internal/logger"
 	"golang-system-monitor/internal/utils"
-	// "golang-system-monitor/internal/logger"
 
 	"github.com/anatol/smart.go"
 )
@@ -18,6 +17,7 @@ type Smart struct{
 
 type SmartData struct{
     Device  string              `json:"device"`
+    Type    string              `json:"type"`
     Data    map[string]string   `json:"data"`
 }
 
@@ -48,7 +48,7 @@ func ReadData(device string) (SmartData, error){
 
     dev, err := smart.Open(device)
     if err != nil{
-        log.Println("Error opening device: ", err)
+        logger.GetLogger().Error("Error opening device: ", err)
         return SmartData{}, err
     }
 
@@ -60,11 +60,12 @@ func ReadData(device string) (SmartData, error){
     smartData, err := utils.ExecuteCommand("smartctl", "-A", device)
 
     if err != nil{
-        log.Println("Error reading smart data: ", err)
+        logger.GetLogger().Error("Error reading smart data: ", err)
         return SmartData{}, err
     }
 
     output.Device = device
+
 
     output.Data = make(map[string]string)
     
@@ -73,10 +74,12 @@ func ReadData(device string) (SmartData, error){
     switch dev.(type){
         case *smart.NVMeDevice:
             output.Data = readNvmeSmart(smartDataSplit)
+            output.Type = "nvme"
         case *smart.SataDevice:
             output.Data = readSataSmart(smartDataSplit)
+            output.Type = "sata"
         default:
-            log.Println("Unknown device type")
+            logger.GetLogger().Error("Unknown device type")
     }
 
 
@@ -104,14 +107,14 @@ func readSataSmart(dataSplit []string) map[string]string{
 
     output := make(map[string]string)
 
-    for _, line := range dataSplit{
+    for _ , line := range dataSplit{
         fields := strings.Fields(string(line))
 
         if len(fields) < 10{
             continue
         }
 
-        output[fields[2]] = strings.Join(fields[2:], " ")
+        output[fields[0]] = strings.Join(fields[1:], " ")
     }
 
     return output
@@ -122,7 +125,7 @@ func getDevices() ([]string, error){
     data, err := utils.ExecuteCommand("lsblk", "-d", "-o", "NAME", "-n", "-l")
 
     if err != nil{
-        log.Println("Error getting disks: ", err)
+        logger.GetLogger().Error("Error getting disks: ", err)
         return nil, err
     }
 
@@ -140,8 +143,6 @@ func getDevices() ([]string, error){
             re := regexp.MustCompile(`n\d+`)
             line = re.ReplaceAllString(line, "")
         }
-
-        // fmt.Println(line)
 
         disks = append(disks, "/dev/" + line)
     }
