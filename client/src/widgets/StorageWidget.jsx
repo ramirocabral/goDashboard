@@ -3,8 +3,8 @@
 import { useState, useEffect } from "react"
 import { useWebSocket } from "../contexts/WebSocketContext"
 import { HardDrive, ChevronDown, ChevronUp } from "lucide-react"
-import CardContainer from "../components/cards/CardContainer"
-import InfoGrid from "../components/cards/InfoGrid"
+import CardContainer from "../components/widgets/WidgetContainer"
+import InfoGrid from "../components/widgets/WidgetGrid"
 
 const StorageCard = () => {
   const { disksInfo } = useWebSocket()

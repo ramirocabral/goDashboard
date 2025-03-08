@@ -3,10 +3,10 @@
 import { useState, useEffect } from "react"
 import { MemoryStickIcon as Memory } from "lucide-react"
 import { useWebSocket } from "../contexts/WebSocketContext"
-import CardContainer from "../components/cards/CardContainer"
-import CardHeader from "../components/cards/CardHeader"
-import Chart from "../components/cards/Chart"
-import InfoGrid from "../components/cards/InfoGrid"
+import CardContainer from "../components/widgets/WidgetContainer"
+import CardHeader from "../components/widgets/WidgetHeader"
+import Chart from "../components/widgets/WidgetChart"
+import InfoGrid from "../components/widgets/WidgetGrid"
 
 
 const MemoryWidget = () => {

@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useWebSocket } from "../contexts/WebSocketContext"
-import CardContainer from "../components/cards/CardContainer"
+import CardContainer from "../components/widgets/WidgetContainer"
 import { Box, Play, Pause, RotateCcw, Search, ChevronDown, ChevronUp } from "lucide-react"
 const Containers = () => {
   const { containerData } = useWebSocket()

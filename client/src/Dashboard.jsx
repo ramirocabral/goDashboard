@@ -1,9 +1,9 @@
 "use client"
 
-import CpuWidget from "./widgets/CpuCard"
+import CpuWidget from "./widgets/CpuWidget"
 import MemoryWidget from "./widgets/MemoryWidget"
 import StorageWidget from "./widgets/StorageWidget"
-import NetworkCard from "./widgets/NetworkCard"
+import NetworkWidget from "./widgets/NetworkWidget"
 import Containers from "./widgets/ContainersWidget"
 import SmartWidget from "./widgets/SmartWidget"
 import { useWebSocket } from "./contexts/WebSocketContext"
@@ -41,7 +41,7 @@ const Dashboard = () => {
       <div className="grid-container mb-6">
         <CpuWidget/>
         <MemoryWidget />
-        <NetworkCard/>
+        <NetworkWidget/>
         <StorageWidget />
       </div>
 

@@ -4,12 +4,11 @@ import { useState, useEffect } from "react"
 import { useWebSocket } from "../contexts/WebSocketContext"
 import { Area, AreaChart, ResponsiveContainer } from "recharts"
 import { Network, ChevronDown, ChevronUp } from "lucide-react"
-import CardContainer from "../components/cards/CardContainer"
-import CardHeader from "../components/cards/CardHeader"
-import Chart from "../components/cards/Chart"
-import InfoGrid from "../components/cards/InfoGrid"
+import CardContainer from "../components/widgets/WidgetContainer"
+import Chart from "../components/widgets/WidgetChart"
+import InfoGrid from "../components/widgets/WidgetGrid"
 
-const NetworkCard = () => {
+const NetworkWidget = () => {
   const { networkData } = useWebSocket()
   const [realtimeData, setRealtimeData] = useState({})
   const [selectedInterface, setSelectedInterface] = useState(null)
@@ -178,4 +177,4 @@ const NetworkCard = () => {
   )
 }
 
-export default NetworkCard
+export default NetworkWidget
