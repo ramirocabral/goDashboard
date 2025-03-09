@@ -15,6 +15,7 @@ services:
       - /sys:/host/sys:ro
       - /etc/os-release:/host/etc/os-release:ro
       - /etc/hostname:/host/etc/hostname:ro
+      #you can add disks here to monitor SMART data
     depends_on:
       - influxdb2
     privileged: true

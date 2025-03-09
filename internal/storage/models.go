@@ -59,7 +59,6 @@ type NetworkResponse struct{
 
 type NetworkStats struct{
     Interface       string          `json:"interface"`
-    Ip              string          `json:"ip"`
     Data            []NetworkPoint  `json:"data"` 
 } 
 

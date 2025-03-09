@@ -9,7 +9,6 @@ import (
 	"golang-system-monitor/internal/storage"
 	"golang-system-monitor/internal/utils"
 
-	// "golang-system-monitor/internal/logger"
 	"github.com/influxdata/influxdb-client-go/v2"
 	"github.com/influxdata/influxdb-client-go/v2/api"
 )
