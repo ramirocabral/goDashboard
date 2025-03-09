@@ -115,7 +115,7 @@ func parseCpuStats(result *api.QueryTableResult) storage.CPUResponse{
 	data = append(data, point)
     }
 
-    stats.Data = data
+    stats.Stats = data
 
     return stats
 }
@@ -235,7 +235,7 @@ func parseMemoryStats(result *api.QueryTableResult) storage.MemoryResponse{
 
     }
     
-    response.Data = data
+    response.Stats = data
 
     return response
 }
@@ -288,11 +288,11 @@ func parseNetworkStats(result *api.QueryTableResult) storage.NetworkResponse{
 		if _, exists := interfaceMap[key]; !exists {
 			interfaceMap[key] = &storage.NetworkStats{
 				Interface: interfaceName,
-				Data:      []storage.NetworkPoint{},
+				Stats:      []storage.NetworkPoint{},
 			}
 		}
 
-		interfaceMap[key].Data = append(interfaceMap[key].Data, point)
+		interfaceMap[key].Stats = append(interfaceMap[key].Stats, point)
 	}
 
 	var response storage.NetworkResponse

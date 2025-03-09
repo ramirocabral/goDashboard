@@ -50,7 +50,6 @@ var lastNetworkData = map[string]ByteStore{}
 func ReadNetworks() (Networks, error){
     output := Networks{}
 
-    // command := "ip -o addr show scope global | awk '{split($4, a, \"/\"); print $2\" : \"a[1]}'"
     command := "ls /host/sys/class/net"
 
     data, err := utils.ExecuteCommandWithPipe(command)
@@ -62,7 +61,7 @@ func ReadNetworks() (Networks, error){
 
     for _, iface := range ifaces{
 
-        if strings.HasPrefix(iface, "docker") || strings.HasPrefix(iface, "br") || iface == "" || strings.HasPrefix(iface, "veth") {
+        if strings.HasPrefix(iface, "docker") || strings.HasPrefix(iface, "br") || iface == "" || strings.HasPrefix(iface, "veth") || strings.HasPrefix(iface, "lo"){
             continue
         }
 
@@ -121,10 +120,6 @@ func getNetworkBytes(interfaceName string) ByteStore{
 
     data = utils.TrimNewLine(data)
     output.TxBytes = utils.StrToUint64(string(data))
-
-    // dataSplit := strings.Fields(string(data))
-    // output.RxBytes = utils.StrToUint64(dataSplit[1])
-    // output.TxBytes = utils.StrToUint64(dataSplit[2])
 
     return output
 }
