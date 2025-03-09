@@ -26,4 +26,4 @@ jobs:
           context: ./api
           file: ./api/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/go-dashboard:$(date +%s)
+          tags: ghcr.io/${{ github.repository_owner }}/go-dashboard:latest
