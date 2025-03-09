@@ -4,7 +4,7 @@ WORKDIR /app
 COPY go.mod go.sum .
 RUN go mod download
 
-COPY . . --exclude tmp .git 
+COPY . . 
 RUN CGO_ENABLED=0 GOOS=linux go build -o /api cmd/server/main.go
 
 FROM debian:stable-slim
