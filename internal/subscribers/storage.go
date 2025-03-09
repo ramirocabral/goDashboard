@@ -1,8 +1,8 @@
 package subscribers
 
 import (
-    "golang-system-monitor/internal/core"
-    "golang-system-monitor/internal/storage"
+    "go-dashboard/internal/core"
+    "go-dashboard/internal/storage"
 )
 
 type StorageSubscriber struct{

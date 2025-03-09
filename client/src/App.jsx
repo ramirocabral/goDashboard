@@ -1,15 +1,17 @@
 "use client"
 
-import { WebSocketProvider } from "./contexts/WebSocketContext"
-import Dashboard from "./Dashboard"
+import Dashboard from "./pages/Dashboard"
+import Historical from "./pages/Charts"
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
 
 function App() {
   return (
-    <WebSocketProvider>
-      <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
-        <Dashboard/>
-      </div>
-    </WebSocketProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/charts" element={<Historical />} />
+      </Routes>
+    </Router>
   )
 }
 

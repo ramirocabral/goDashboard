@@ -4,7 +4,7 @@ import (
     "errors"
     "strings"
 
-    "golang-system-monitor/internal/utils"
+    "go-dashboard/internal/utils"
 )
 
 type Disks struct{

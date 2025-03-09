@@ -27,8 +27,15 @@
 }
 
 @layer components {
-  .card {
-    @apply relative rounded-xl bg-gradient-to-br from-gray-900 to-gray-800 p-4 shadow-lg transition-all hover:shadow-xl min-h-[330px];
+  .widget {
+    @apply relative rounded-xl bg-widget p-4 shadow-lg transition-all hover:shadow-xl min-h-[330px];
+  }
+
+  .btn-custom {
+    @apply bg-blue-950 text-white px-4 py-2 rounded;
+  }
+  .btn-custom:hover {
+    @apply bg-blue-900;
   }
 
   .card-header {

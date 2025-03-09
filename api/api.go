@@ -5,11 +5,11 @@ import (
 	"time"
 	"github.com/gorilla/mux"
 
-	"golang-system-monitor/internal/configuration"
-	"golang-system-monitor/internal/core"
-	"golang-system-monitor/internal/logger"
-	"golang-system-monitor/internal/storage"
-	"golang-system-monitor/pkg/stats"
+	"go-dashboard/internal/configuration"
+	"go-dashboard/internal/core"
+	"go-dashboard/internal/logger"
+	"go-dashboard/internal/storage"
+	"go-dashboard/pkg/stats"
 )
 
 type app struct{
@@ -30,7 +30,10 @@ func NewApp(cfg configuration.Config,store storage.Storage, eb *core.EventBus, s
 
 // create the routes
 func (app *app) Mount() http.Handler{
-    r := mux.NewRouter().PathPrefix("/api/v1").Subrouter()
+
+    mux := mux.NewRouter()
+
+    r := mux.PathPrefix("/api/v1").Subrouter()
 
     //set custom middlewares
     r.Use(app.LoggingMiddleware)
@@ -60,7 +63,10 @@ func (app *app) Mount() http.Handler{
     history.HandleFunc("/io", app.ioHistoryHandler)
     history.HandleFunc("/network", app.networkHistoryHandler)
 
-    return r
+    //serve static files on /dist directory
+    mux.PathPrefix("/").Handler(http.FileServer(http.Dir("/dist")))
+
+    return mux
 }
 
 //start the server

@@ -8,7 +8,7 @@ import (
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
 
-	"golang-system-monitor/internal/core"
+	"go-dashboard/internal/core"
 )
 
 type Containers []Container     

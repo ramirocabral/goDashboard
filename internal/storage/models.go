@@ -11,7 +11,7 @@ type CPUResponse struct{
     Family      string          `json:"family"`
     Cores       uint64          `json:"cores"`
     Threads     uint64          `json:"threads"`
-    Data        []CPUPoint      `json:"data"`
+    Stats       []CPUPoint      `json:"stats"`
 }
 
 type CPUPoint struct{
@@ -38,7 +38,7 @@ type IOPoint struct{
 type MemoryResponse struct{
     Type        string          `json:"type"`
     Frequency   uint64          `json:"frequency"`
-    Data        []MemoryPoint   `json:"stats"`
+    Stats       []MemoryPoint   `json:"stats"`
 }
 
 type MemoryPoint struct{
@@ -59,7 +59,7 @@ type NetworkResponse struct{
 
 type NetworkStats struct{
     Interface       string          `json:"interface"`
-    Data            []NetworkPoint  `json:"data"` 
+    Stats            []NetworkPoint `json:"stats"` 
 } 
 
 type NetworkPoint struct{

@@ -3,7 +3,7 @@ package core
 import (
     "sync"
     "time"
-    "golang-system-monitor/internal/logger"
+    "go-dashboard/internal/logger"
 )
 
 type Subscriber interface{

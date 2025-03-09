@@ -4,9 +4,9 @@ import (
 	"strings"
 	"time"
 
-	"golang-system-monitor/internal/utils"
-	"golang-system-monitor/internal/core"
-	"golang-system-monitor/internal/logger"
+	"go-dashboard/internal/utils"
+	"go-dashboard/internal/core"
+	"go-dashboard/internal/logger"
 )
 
 type DiskIO []Disk

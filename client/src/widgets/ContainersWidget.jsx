@@ -62,13 +62,13 @@ const Containers = () => {
             <input
               type="text"
               placeholder="Filter..."
-              className="w-32 rounded-md border border-gray-700 bg-gray-800 py-1 pl-8 pr-2 text-xs text-gray-200 focus:outline-none focus:ring-1 focus:ring-cyan-500"
+              className="w-32 rounded border border-gray-700 bg-gray-800 py-1 pl-8 pr-2 text-xs text-gray-200 focus:outline-none focus:ring-1 focus:ring-cyan-500"
               value={filter}
               onChange={(e) => setFilter(e.target.value)}
             />
           </div>
           <button
-            className="rounded-md bg-gray-800 p-1 hover:bg-gray-700"
+            className="rounded bg-gray-800 p-1 hover:bg-gray-700"
             onClick={() => setExpanded(!expanded)}
           >
             {expanded ? (

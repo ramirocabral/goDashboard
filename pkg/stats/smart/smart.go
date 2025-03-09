@@ -5,8 +5,8 @@ import (
 	"regexp"
 	"strings"
 
-	"golang-system-monitor/internal/logger"
-	"golang-system-monitor/internal/utils"
+	"go-dashboard/internal/logger"
+	"go-dashboard/internal/utils"
 
 	"github.com/anatol/smart.go"
 )

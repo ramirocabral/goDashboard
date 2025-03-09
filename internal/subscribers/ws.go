@@ -3,8 +3,8 @@ package subscribers
 import (
 	"sync"
 
-	"golang-system-monitor/internal/core"
-	"golang-system-monitor/internal/logger"
+	"go-dashboard/internal/core"
+	"go-dashboard/internal/logger"
 	"github.com/gorilla/websocket"
 )
 
