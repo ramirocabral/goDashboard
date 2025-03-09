@@ -23,7 +23,6 @@ const API_ENDPOINTS = {
 }
 
 export const WebSocketProvider = ({ children }) => {
-  // State for each type of data
   const [cpuData, setCpuData] = useState(null)
   const [memoryData, setMemoryData] = useState(null)
   const [networkData, setNetworkData] = useState(null)
@@ -31,12 +30,10 @@ export const WebSocketProvider = ({ children }) => {
   const [uptimeData, setUptimeData] = useState(null)
   const [ioData, setIoData] = useState(null)
 
-  // State for REST API data
   const [systemInfo, setSystemInfo] = useState(null)
   const [disksInfo, setDisksInfo] = useState(null)
   const [smartData, setSmartData] = useState(null)
 
-  // Connection status
   const [connected, setConnected] = useState({
     cpu: false,
     memory: false,
@@ -46,7 +43,6 @@ export const WebSocketProvider = ({ children }) => {
     io: false,
   })
 
-  // Function to create WebSocket connections
   const createWebSocket = useCallback((url, dataType) => {
     const socket = new WebSocket(url)
 
@@ -90,7 +86,6 @@ export const WebSocketProvider = ({ children }) => {
       console.log(`${dataType} WebSocket disconnected`)
       setConnected((prev) => ({ ...prev, [dataType.toLowerCase()]: false }))
 
-      // Attempt to reconnect after 5 seconds
       setTimeout(() => {
         createWebSocket(url, dataType)
       }, 5000)

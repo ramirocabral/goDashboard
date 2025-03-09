@@ -15,8 +15,6 @@ const MemoryHistoryChart = ({ data }) => {
         frequency: data.frequency,
       })
 
-      // console.log(data.stats)
-
       setChartData(
         data.stats.map((point) => ({
           time: new Date(point.timestamp),

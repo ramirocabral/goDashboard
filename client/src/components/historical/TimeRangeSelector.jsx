@@ -1,7 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
 const TimeRangeSelector = ({ timeRange, setTimeRange }) => {
   return (
     <div className="flex space-x-2 mt-2 sm:mt-0 overflow-x-auto w-full sm:w-auto justify-center">

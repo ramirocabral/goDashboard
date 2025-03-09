@@ -30,7 +30,10 @@ func NewApp(cfg configuration.Config,store storage.Storage, eb *core.EventBus, s
 
 // create the routes
 func (app *app) Mount() http.Handler{
-    r := mux.NewRouter().PathPrefix("/api/v1").Subrouter()
+
+    mux := mux.NewRouter()
+
+    r := mux.PathPrefix("/api/v1").Subrouter()
 
     //set custom middlewares
     r.Use(app.LoggingMiddleware)
@@ -60,7 +63,10 @@ func (app *app) Mount() http.Handler{
     history.HandleFunc("/io", app.ioHistoryHandler)
     history.HandleFunc("/network", app.networkHistoryHandler)
 
-    return r
+    //serve static files on /dist directory
+    mux.PathPrefix("/").Handler(http.FileServer(http.Dir("/dist")))
+
+    return mux
 }
 
 //start the server

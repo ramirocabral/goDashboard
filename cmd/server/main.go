@@ -16,15 +16,15 @@ import (
 
 func main(){
     cfg :=  configuration.GetConfig()
-    logger.Init("prod")
+    logger.Init(cfg.Env)
 
-    //database
     db, err := influxdb.New(
 	"http://influxdb2:8086",
 	cfg.DB.Token,
 	cfg.DB.Org,
 	cfg.DB.Bucket,
     )
+
     if err != nil{
 	logger.GetLogger().Fatal("Error connecting to database: ", err)
     }
