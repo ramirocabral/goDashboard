@@ -1,7 +1,7 @@
 "use client"
 
 const CardContainer = ({ children }) => (
-    <div className="card">
+    <div className="widget">
       {children}
     </div>
 );
