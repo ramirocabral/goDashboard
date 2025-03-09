@@ -2,7 +2,7 @@ package storage
 
 import (
     "time"
-    "golang-system-monitor/internal/core"
+    "go-dashboard/internal/core"
 )
 
 // we do the parsing on the repository layer because of the simplicity of the project and the raw format of the data returned by influxdb

@@ -3,7 +3,7 @@ package api
 //logging middleware
 
 import (
-	"golang-system-monitor/internal/logger"
+	"go-dashboard/internal/logger"
 	"net/http"
 	"time"
 )

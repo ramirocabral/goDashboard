@@ -24,7 +24,7 @@ const SystemWidget = () => {
     <div className="widget p-8 h-full">
       <div className="flex flex-col">
         <div className="flex justify-between items-center">
-          <a href="https://www.github.com/ramirocabral/golang-system-monitor" className="text-white text-sm flex items-center">
+          <a href="https://www.github.com/ramirocabral/go-dashboard" className="text-white text-sm flex items-center">
             <Github className="h-5 w-5 mr-2" />
           </a>
         </div>

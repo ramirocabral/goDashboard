@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"golang-system-monitor/internal/core"
-	"golang-system-monitor/internal/utils"
+	"go-dashboard/internal/core"
+	"go-dashboard/internal/utils"
 
 	"github.com/shirou/gopsutil/v3/cpu"
 )

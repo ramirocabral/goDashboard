@@ -1,4 +1,4 @@
-BINARY_NAME = golang-system-monitor
+BINARY_NAME = go-dashboard
 BUILD_DIR = ./target
 BUILD_PATH = $(BUILD_DIR)/$(BINARY_NAME)
 

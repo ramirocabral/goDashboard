@@ -5,8 +5,8 @@ import (
 	"strings"
 	"time"
 
-	"golang-system-monitor/internal/utils"
-	"golang-system-monitor/internal/core"
+	"go-dashboard/internal/utils"
+	"go-dashboard/internal/core"
 )
 
 

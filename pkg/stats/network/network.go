@@ -4,8 +4,8 @@ import (
 	"log"
 	"strings"
 
-	"golang-system-monitor/internal/core"
-	"golang-system-monitor/internal/utils"
+	"go-dashboard/internal/core"
+	"go-dashboard/internal/utils"
 )
 
 type Networks []Network

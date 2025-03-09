@@ -3,7 +3,7 @@ package core
 import (
     "time"
     "context"
-    "golang-system-monitor/internal/logger"
+    "go-dashboard/internal/logger"
 )
 
 type Collector interface{

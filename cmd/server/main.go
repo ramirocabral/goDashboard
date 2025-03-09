@@ -4,14 +4,14 @@ import (
     "context"
     "time"
 
-    "golang-system-monitor/internal/collector"
-    "golang-system-monitor/internal/configuration"
-    "golang-system-monitor/internal/core"
-    "golang-system-monitor/internal/influxdb"
-    "golang-system-monitor/internal/logger"
-    "golang-system-monitor/internal/subscribers"
-    "golang-system-monitor/pkg/stats"
-    "golang-system-monitor/api"
+    "go-dashboard/internal/collector"
+    "go-dashboard/internal/configuration"
+    "go-dashboard/internal/core"
+    "go-dashboard/internal/influxdb"
+    "go-dashboard/internal/logger"
+    "go-dashboard/internal/subscribers"
+    "go-dashboard/pkg/stats"
+    "go-dashboard/api"
 )
 
 func main(){

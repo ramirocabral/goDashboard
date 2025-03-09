@@ -1,15 +1,15 @@
 package stats
 
 import (
-    "golang-system-monitor/pkg/stats/container"
-    "golang-system-monitor/pkg/stats/cpu"
-    "golang-system-monitor/pkg/stats/disk"
-    "golang-system-monitor/pkg/stats/host"
-    "golang-system-monitor/pkg/stats/io"
-    "golang-system-monitor/pkg/stats/memory"
-    "golang-system-monitor/pkg/stats/network"
-    "golang-system-monitor/pkg/stats/smart"
-    "golang-system-monitor/pkg/stats/uptime"
+    "go-dashboard/pkg/stats/container"
+    "go-dashboard/pkg/stats/cpu"
+    "go-dashboard/pkg/stats/disk"
+    "go-dashboard/pkg/stats/host"
+    "go-dashboard/pkg/stats/io"
+    "go-dashboard/pkg/stats/memory"
+    "go-dashboard/pkg/stats/network"
+    "go-dashboard/pkg/stats/smart"
+    "go-dashboard/pkg/stats/uptime"
 )
 
 type StatsManager struct {}

@@ -1,9 +1,9 @@
 package collector
 
 import(
-    "golang-system-monitor/pkg/stats"
-    "golang-system-monitor/internal/core"
-    "golang-system-monitor/internal/logger"
+    "go-dashboard/pkg/stats"
+    "go-dashboard/internal/core"
+    "go-dashboard/internal/logger"
 )
 
 type CPUCollector struct{

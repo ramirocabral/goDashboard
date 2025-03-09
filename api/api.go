@@ -5,11 +5,11 @@ import (
 	"time"
 	"github.com/gorilla/mux"
 
-	"golang-system-monitor/internal/configuration"
-	"golang-system-monitor/internal/core"
-	"golang-system-monitor/internal/logger"
-	"golang-system-monitor/internal/storage"
-	"golang-system-monitor/pkg/stats"
+	"go-dashboard/internal/configuration"
+	"go-dashboard/internal/core"
+	"go-dashboard/internal/logger"
+	"go-dashboard/internal/storage"
+	"go-dashboard/pkg/stats"
 )
 
 type app struct{

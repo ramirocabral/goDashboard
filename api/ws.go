@@ -3,8 +3,8 @@ package api
 import (
     "net/http"
     "github.com/gorilla/websocket"
-    "golang-system-monitor/internal/logger"
-    "golang-system-monitor/internal/subscribers"
+    "go-dashboard/internal/logger"
+    "go-dashboard/internal/subscribers"
 )
 
 var upgrader = websocket.Upgrader{

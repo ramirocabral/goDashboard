@@ -3,7 +3,7 @@ package api
 import (
     "net/http"
 
-    "golang-system-monitor/internal/logger"
+    "go-dashboard/internal/logger"
 )
 
 func (app *app) internalServerError(w http.ResponseWriter, r *http.Request, err error){

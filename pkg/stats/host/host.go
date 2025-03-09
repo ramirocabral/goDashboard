@@ -6,7 +6,7 @@ import (
     "strings"
     "time"
 
-    "golang-system-monitor/internal/utils"
+    "go-dashboard/internal/utils"
 )
 
 type Host struct{

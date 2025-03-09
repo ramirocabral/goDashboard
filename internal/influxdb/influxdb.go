@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"time"
 
-	"golang-system-monitor/internal/core"
-	"golang-system-monitor/internal/storage"
-	"golang-system-monitor/internal/utils"
+	"go-dashboard/internal/core"
+	"go-dashboard/internal/storage"
+	"go-dashboard/internal/utils"
 
 	"github.com/influxdata/influxdb-client-go/v2"
 	"github.com/influxdata/influxdb-client-go/v2/api"
