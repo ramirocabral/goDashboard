@@ -1,26 +1,25 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, useCallback } from "react"
+import { API_BASE_URL, API_BASE_URL_REALTIME, API_BASE_URL_STATS } from "../constants/endpoints"
 
 const WebSocketContext = createContext(null)
 
-const BASE_URL="http://nas.local:8080/api/v1"
-
 // WebSocket endpoints
 const WS_ENDPOINTS = {
-  CPU: `${BASE_URL}/ws/cpu`,
-  MEMORY: `${BASE_URL}/ws/memory`,
-  NETWORK: `${BASE_URL}/ws/network`,
-  CONTAINER: `${BASE_URL}/ws/container`,
-  UPTIME: `${BASE_URL}/ws/uptime`,
-  IO: `${BASE_URL}/ws/io`,
+  CPU: `${API_BASE_URL_REALTIME}/cpu`,
+  MEMORY: `${API_BASE_URL_REALTIME}/memory`,
+  NETWORK: `${API_BASE_URL_REALTIME}/network`,
+  CONTAINER: `${API_BASE_URL_REALTIME}/container`,
+  UPTIME: `${API_BASE_URL_REALTIME}/uptime`,
+  IO: `${API_BASE_URL_REALTIME}/io`,
 }
 
 // REST API endpoints
 const API_ENDPOINTS = {
-  SYSTEM_INFO: `${BASE_URL}/stat/host`,
-  DISKS: `${BASE_URL}/stat/disk`,
-  SMART: `${BASE_URL}/stat/smart`,
+  SYSTEM_INFO: `${API_BASE_URL_STATS}/host`,
+  DISKS: `${API_BASE_URL_STATS}/disk`,
+  SMART: `${API_BASE_URL_STATS}/smart`,
 }
 
 export const WebSocketProvider = ({ children }) => {
@@ -185,22 +184,6 @@ export const WebSocketProvider = ({ children }) => {
     return () => clearInterval(interval)
   }, [])
 
-  const fetchHistoricalData = async (dataType, startTime, endTime, interval) => {
-    try {
-      const response = await fetch(
-        `${BASE_URL}/api/${dataType}/history?start=${startTime}&end=${endTime}&interval=${interval}`,
-      )
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      const data = await response.json()
-      return data
-    } catch (error) {
-      console.error(`Error fetching ${dataType} historical data:`, error)
-      return null
-    }
-  }
-
   return (
     <WebSocketContext.Provider
       value={{
@@ -214,7 +197,6 @@ export const WebSocketProvider = ({ children }) => {
         disksInfo,
         smartData,
         connected,
-        fetchHistoricalData,
       }}
     >
       {children}
@@ -222,7 +204,7 @@ export const WebSocketProvider = ({ children }) => {
   )
 }
 
-// Custom hook to use the WebSocket context
+//custom hook
 export const useWebSocket = () => {
   const context = useContext(WebSocketContext)
   if (!context) {
