@@ -1,23 +1,27 @@
 # goDashboard
 
 ## About
-
-Este proyecto es un sistema de monitoreo en tiempo real para servidores, diseñado para recopilar y visualizar métricas de rendimiento como uso de CPU, memoria, I/O de disco y red. Utiliza una REST API desarrollada en Go y una interfaz web en ReactJS. Los datos históricos se almacenan en InfluxDB y se transmiten en tiempo real mediante WebSockets.
+This project is a real-time monitoring system for Linux servers, designed to collect and visualize performance metrics such as CPU usage, memory, disk I/O, and network. It uses a REST API developed in Go and a web interface in ReactJS. Historical data is stored in InfluxDB and transmitted in real-time using WebSockets.
 
 ![Dashboard](./assets/monk-home.png)
 
-## Tecnologías utilizadas
+## Technologies used
 
-- **Go**: Backend para la REST API y WebSockets.
-- **ReactJS + TailwindCSS**: Interfaz de usuario para la visualización de métricas.
-- **InfluxDB**: Base de datos optimizada para Timeseries.
-- **WebSockets**: Comunicación en tiempo real entre el servidor y el frontend.
-- **Docker**: Contenedores para la aplicación y base de datos.
-- **GitHub Actions**: CI/CD para despliegue automatizado.
+- **Go**: Backend for the REST API and WebSockets.
+- **ReactJS + TailwindCSS**: User interface for metrics visualization.
+- **InfluxDB**: Database optimized for time series data.
+- **WebSockets**: Real-time communication between the server and the client.
+- **Docker**: Containers for the application and the database.
+- **GitHub Actions**: CI/CD for automatic deployment.
 
-## Uso
+## Installation prerequisites
 
-### Crear un archivo `docker-compose.yaml` con el siguiente contenido:
+- **Docker**: [Install Docker](https://docs.docker.com/get-docker/)
+- **Docker Compose**: [Install Docker Compose](https://docs.docker.com/compose/install/)
+
+## Usage
+
+### 1. Create a `docker-compose.yaml` file with the following content:
 
 ```yaml
 services:
@@ -64,10 +68,12 @@ services:
 volumes:
   influxdb2:
 ```
-### 2. Configurar variables de entorno
 
-Crear un archivo `.env` basado en el archivo `.env.example` y configurar las variables de entorno necesarias:
+### 2. Configure environment variables
 
+Create an `.env` file based on the `.env.example` file and configure the necessary environment variables:
+
+Example:
 ``` bash
 INFLUXDB_INIT_MODE=setup
 INFLUXDB_INIT_USERNAME=admin
@@ -78,21 +84,22 @@ INFLUXDB_INIT_RETENTION=1D
 INFLUXDB_INIT_ADMIN_TOKEN=mytoken
 ```
 
-### 3. Ejecutar la aplicacion
+### 3. Run the application
 
-Ejecutar el siguiente comando en la terminal:
+Execute the following command in the terminal:
 
 ```bash
 docker-compose up -d
 ```
 
-### 5. Acceder a la aplicación
+### 4. Access the application
 
-Abre en el navegador:
+Open your browser and access the following URL:
 
 ```
 http://localhost:8080
 ```
+When running it on a server, replace `localhost` with the server's IP address and make sure the port is open in the firewall.
 ## Screenshots
 
 ### Dashboard
@@ -102,10 +109,10 @@ http://localhost:8080
 ![IoChart](./assets/vivobook-io-chart.png)
 ![CpuChart](./assets/vivobook-cpu-chart.png)
 
-## Contribuir
+## Contributing
 
-Si deseas contribuir, por favor abre un issue o un pull request en el repositorio.
+If you wish to contribute to the project, please open an issue or submit a pull request in the repository.
 
-## Licencia
+## License
 
-Este proyecto está bajo la licencia GNU GPLv3. Para más información, ver el archivo `LICENSE`.
+This project is under the GNU GPLv3 license. For more information, see the `LICENSE` file.
