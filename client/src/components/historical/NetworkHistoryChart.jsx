@@ -46,12 +46,6 @@ const NetworkHistoryChart = ({ data }) => {
         }));
 
         setChartData(newChartData);
-
-        const values = newChartData.flatMap((d) => [d.rxBytes, d.txBytes]);
-        const min = Math.min(...values, 0);
-        const max = Math.max(...values, 1) * 1.05;
-
-        setYDomain([min, max]);
       }
     }
   }, [selectedInterface, data]);
