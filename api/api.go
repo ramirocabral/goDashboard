@@ -29,18 +29,16 @@ func NewApp(cfg configuration.Config,store storage.Storage, eb *core.EventBus, s
 }
 
 // create the routes
-func (app *app) Mount() http.Handler{
-
+func (app *app) Mount() http.Handler {
     mux := mux.NewRouter()
 
     r := mux.PathPrefix("/api/v1").Subrouter()
 
-    //set custom middlewares
+    // Set custom middlewares
     r.Use(app.LoggingMiddleware)
     r.Use(app.CORSMiddleware)
 
     ws := r.PathPrefix("/ws").Subrouter()
-
     ws.HandleFunc("/cpu", app.wsCPUHandler)
     ws.HandleFunc("/memory", app.wsMemoryHandler)
     ws.HandleFunc("/io", app.wsIOHandler)
@@ -49,22 +47,24 @@ func (app *app) Mount() http.Handler{
     ws.HandleFunc("/uptime", app.wsUptimeHandler)
 
     stats := r.PathPrefix("/stat").Subrouter()
-
     stats.HandleFunc("/smart", app.smartHandler)
     stats.HandleFunc("/host", app.hostHandler)
     stats.HandleFunc("/disk", app.diskHandler)
 
     history := r.PathPrefix("/history").Subrouter()
-
     history.Use(app.ValidateTimeMiddleware)
-
     history.HandleFunc("/cpu", app.cpuHistoryHandler)
     history.HandleFunc("/memory", app.memoryHistoryHandler)
     history.HandleFunc("/io", app.ioHistoryHandler)
     history.HandleFunc("/network", app.networkHistoryHandler)
 
-    //serve static files on /dist directory
-    mux.PathPrefix("/").Handler(http.FileServer(http.Dir("/dist")))
+    // serve static files under "/assets/"
+    mux.PathPrefix("/assets/").Handler(http.StripPrefix("/assets/", http.FileServer(http.Dir("/dist/assets"))))
+
+    // serve index.html for frontend routes with react
+    mux.HandleFunc("/{_:.*}", func(w http.ResponseWriter, r *http.Request) {
+        http.ServeFile(w, r, "/dist/index.html")
+    })
 
     return mux
 }
@@ -80,7 +80,6 @@ func (app *app) Run(mux http.Handler) error {
     }
 
     logger.GetLogger().Infof("Starting server on port %s, env %s", app.cfg.APIPort, app.cfg.Env)
-
 
     return srv.ListenAndServe()
 }

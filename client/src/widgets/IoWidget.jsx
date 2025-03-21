@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useWebSocket } from "../contexts/WebSocketContext";
-import { HardDrive, ChevronDown, ChevronUp } from "lucide-react";
+import { HardDrive } from "lucide-react";
 import { Area, AreaChart, ResponsiveContainer } from "recharts";
 import WidgetContainer from "../components/widgets/WidgetContainer";
 import WidgetGrid from "../components/widgets/WidgetGrid";
@@ -22,7 +22,7 @@ const IoWidget = () => {
   }, [devices, selectedDevice]);
 
   const currentDeviceData = devices.find(
-    (device) => device.device === selectedDevice
+    (device) => device.device === selectedDevice,
   ) ||
     devices[0] || {
       device: "N/A",

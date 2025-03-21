@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import Dashboard from "./pages/Dashboard"
-import Historical from "./pages/Charts"
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom"
+import Dashboard from "./pages/Dashboard";
+import Historical from "./pages/Charts";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
 function App() {
   return (
@@ -12,7 +12,7 @@ function App() {
         <Route path="/charts" element={<Historical />} />
       </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

@@ -1,14 +1,13 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useWebSocket } from "../contexts/WebSocketContext"
-import CardContainer from "../components/widgets/WidgetContainer"
-import { Box, Search, ChevronDown, ChevronUp } from "lucide-react"
+import { useState } from "react";
+import { useWebSocket } from "../contexts/WebSocketContext";
+import CardContainer from "../components/widgets/WidgetContainer";
+import { Box, Search, ChevronDown, ChevronUp } from "lucide-react";
 const Containers = () => {
-  const { containerData } = useWebSocket()
-  const [filter, setFilter] = useState("")
-  const [expanded, setExpanded] = useState(false)
-
+  const { containerData } = useWebSocket();
+  const [filter, setFilter] = useState("");
+  const [expanded, setExpanded] = useState(false);
 
   const filteredContainers =
     containerData?.filter(
@@ -16,31 +15,33 @@ const Containers = () => {
         container.name.toLowerCase().includes(filter.toLowerCase()) ||
         container.image.toLowerCase().includes(filter.toLowerCase()) ||
         container.id.toLowerCase().includes(filter.toLowerCase()),
-    ) || []
+    ) || [];
 
   const getTimeElapsed = (timestamp) => {
-    const created = new Date(timestamp * 1000)
-    const now = new Date()
-    const diffMs = now.getTime() - created.getTime()
-    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
-    const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
-    if (diffDays > 0) return `${diffDays}d ${diffHours}h ago`
-    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
-    return `${diffHours}h ${diffMinutes}m ago`
-  }
+    const created = new Date(timestamp * 1000);
+    const now = new Date();
+    const diffMs = now.getTime() - created.getTime();
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    const diffHours = Math.floor(
+      (diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
+    );
+    if (diffDays > 0) return `${diffDays}d ${diffHours}h ago`;
+    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    return `${diffHours}h ${diffMinutes}m ago`;
+  };
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case "running":
-        return "text-green-500"
+        return "text-green-500";
       case "paused":
-        return "text-yellow-500"
+        return "text-yellow-500";
       case "stopped":
-        return "text-red-500"
+        return "text-red-500";
       default:
-        return "text-muted-foreground"
+        return "text-muted-foreground";
     }
-  }
+  };
 
   return (
     <CardContainer>
@@ -52,7 +53,7 @@ const Containers = () => {
           <div>
             <h3 className="text-sm font-medium text-gray-200">Containers</h3>
             <p className="text-xs text-gray-400">
-              {containerData?.containers?.length || 0} containers
+              {containerData?.length || 0} containers running
             </p>
           </div>
         </div>
@@ -108,18 +109,33 @@ const Containers = () => {
                   </tr>
                 </thead>
                 <tbody>
-                {filteredContainers
-                  .slice(0, expanded ? filteredContainers.length : 3)
-                  .map((container) => (
-                  <tr key={container.id} className="border-b border-gray-600 bg-gray-800/50">
-                    <td className="p-2 font-medium text-gray-200">{container.name}</td>
-                    <td className="p-2 font-mono">{container.id.substring(0, 12)}</td>
-                    <td className={`p-2 font-medium ${getStatusColor(container.status)}`}>{container.status}</td>
-                    <td className="p-2 text-gray-300">{container.image}</td>
-                    <td className="p-2 text-gray-300">{getTimeElapsed(container.created)}</td>
-                    <td className="p-2 text-gray-300">{container.uptime}</td>
-                  </tr>
-                ))}
+                  {filteredContainers
+                    .slice(0, expanded ? filteredContainers.length : 3)
+                    .map((container) => (
+                      <tr
+                        key={container.id}
+                        className="border-b border-gray-600 bg-gray-800/50"
+                      >
+                        <td className="p-2 font-medium text-gray-200">
+                          {container.name}
+                        </td>
+                        <td className="p-2 font-mono">
+                          {container.id.substring(0, 12)}
+                        </td>
+                        <td
+                          className={`p-2 font-medium ${getStatusColor(container.status)}`}
+                        >
+                          {container.status}
+                        </td>
+                        <td className="p-2 text-gray-300">{container.image}</td>
+                        <td className="p-2 text-gray-300">
+                          {getTimeElapsed(container.created)}
+                        </td>
+                        <td className="p-2 text-gray-300">
+                          {container.uptime}
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
               {filteredContainers.length > 3 && !expanded && (
@@ -145,6 +161,6 @@ const Containers = () => {
       )}
     </CardContainer>
   );
-}
+};
 
-export default Containers
+export default Containers;
